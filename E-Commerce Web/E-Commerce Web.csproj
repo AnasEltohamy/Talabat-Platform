@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Infrastracture\Presintation\Presintation.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>
