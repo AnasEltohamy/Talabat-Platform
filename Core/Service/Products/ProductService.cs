@@ -2,7 +2,7 @@
 using DomainLayer.Contracts.ProductContracts;
 using DomainLayer.Exceptions;
 using DomainLayer.Models.ProductModels;
-using Service.Products.Specifications;
+using Service.Specifications;
 using ServiceAbstraction;
 using Shared;
 using Shared.DTOs.Product;
@@ -20,14 +20,14 @@ namespace Service.Products
 
         public async Task<IEnumerable<ProductDTO>> GetAllProductAsync(ProductQueryParameters queryParameters)
         {
-            var Spec = new ProductWithTypeAndBrandSpecification(queryParameters);
+            var Spec = new ProductWithIncludesSpecifications(queryParameters);
             var Products =await _unitOfWork.GetRepository<Product,int>().GetAllAsync(Spec);
             var Mappeng = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(Products);
             return Mappeng;
         }
         public async Task<ProductDTO> GetProductByIdAsync(int id)
         {
-            var Spec = new ProductWithTypeAndBrandSpecification(id);
+            var Spec = new ProductWithIncludesSpecifications(id);
             var Product = await _unitOfWork.GetRepository<Product, int>().GetByIdAsync(Spec);
             if (Product is null) 
             {

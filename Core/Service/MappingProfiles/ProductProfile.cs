@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DomainLayer.Models.ProductModels;
+using Service.MappingProfiles.Helper;
 using Shared.DTOs.Product;
 using System;
 using System.Collections.Generic;

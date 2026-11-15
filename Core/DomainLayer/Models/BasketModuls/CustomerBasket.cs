@@ -9,6 +9,6 @@ namespace DomainLayer.Models.BasketModels
     public class CustomerBasket
     {
         public string Id { get; set; }
-        public IEnumerable<BasketItems> items { get; set; } = [];
+        public IEnumerable<BasketItems> Items { get; set; } = [];
     }
 }

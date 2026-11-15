@@ -34,8 +34,7 @@ namespace Service.Basket
             var Item = await _basketReposatory.GetCustomerBasketAsync(id);
             if (Item is not null)
             {
-                var MapObject = _mapper.Map<CustomerBasket, CustomerBasketDTO>(Item);
-                return MapObject;
+                return _mapper.Map<CustomerBasket, CustomerBasketDTO>(Item);
             }
             else
             {

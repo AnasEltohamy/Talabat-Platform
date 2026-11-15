@@ -1,5 +1,6 @@
 ﻿using DomainLayer.Contracts.ProductContracts;
 using DomainLayer.Models.IdentityModuls;
+using DomainLayer.Models.OrderModuls;
 using DomainLayer.Models.ProductModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,6 @@ namespace Peresistence
                 }
             }
 
-
             if (!_context.ProductTypes.Any())
             {
                 var ProductTypesItems = File.OpenRead("../Infrastracture/Peresistence/Store/Data/DataSeed/types.json");
@@ -61,6 +61,15 @@ namespace Peresistence
                 }
             }
 
+            if (!_context.DeliveryMethods.Any())
+            {
+                var deliveryItems = File.OpenRead("../Infrastracture/Peresistence/Store/Data/DataSeed/delivery.json");
+                var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryItems);
+                if (deliveryMethods is not null && deliveryMethods.Any())
+                {
+                   await _context.DeliveryMethods.AddRangeAsync(deliveryMethods);
+                }
+            }
 
             await _context.SaveChangesAsync();
         }

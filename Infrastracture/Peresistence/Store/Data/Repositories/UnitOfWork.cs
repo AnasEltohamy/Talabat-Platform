@@ -22,7 +22,7 @@ namespace Peresistence.Store.Data.Repositories
             }
             else
             {
-                var Repo = new GinaricRepository<TEntity, TKey>(context);
+                var Repo = new GinaricRepository<TEntity, TKey>(context); 
                 _repo.Add(TypeName, Repo);
                 return Repo;
             }
