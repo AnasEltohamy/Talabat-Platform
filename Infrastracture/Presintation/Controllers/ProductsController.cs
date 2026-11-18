@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presintation.Attributes;
 using ServiceAbstraction;
 using Shared;
 using Shared.DTOs.Product;
@@ -16,12 +17,13 @@ namespace Presintation.Controllers
     [Authorize(Roles ="Admin")]
     public class ProductsController(IServiceManager _serviceManager) : ControllerBase
     {
+        [Cache(60)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAllProduct([FromQuery] ProductQueryParameters queryParameters )
         {
             return Ok(await _serviceManager.productService.GetAllProductAsync(queryParameters));
         }
-
+        [Cache(60)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductDTO>> GetProductById(int id)
         {

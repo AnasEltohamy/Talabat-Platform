@@ -24,7 +24,7 @@ namespace Presintation.Controllers
             return await _serviceManager.OrderService.CreateOrderAsync(orderDTO, email);
         }
         [HttpGet]
-        [AllowAnonymous]
+        
         public async Task<ActionResult<IEnumerable<OrderToReturnDTO>>> GetAllOrders()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);

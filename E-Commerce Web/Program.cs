@@ -1,4 +1,5 @@
 using DomainLayer.Contracts.BasketContracts;
+using DomainLayer.Contracts.CashingContracts;
 using DomainLayer.Contracts.ProductContracts;
 using DomainLayer.Models.IdentityModuls;
 using E_Commerce_Web.CustomMiddleWares;
@@ -13,6 +14,7 @@ using Peresistence.IdentityStore;
 using Peresistence.Store;
 using Peresistence.Store.Data.Repositories;
 using Service;
+using Service.Cashing;
 using ServiceAbstraction;
 using Shared.ErrorModels;
 using StackExchange.Redis;
@@ -58,6 +60,9 @@ namespace E_Commerce_Web
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("IdentityStoreConnection"));
             });
 
+
+            builder.Services.AddScoped<ICacheRepository, CacheRepository>();
+            builder.Services.AddScoped<ICacheService, CacheService>();
 
             builder.Services
                 .AddIdentityCore<AppUser>()
