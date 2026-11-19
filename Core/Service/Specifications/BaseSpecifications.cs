@@ -24,9 +24,11 @@ namespace Service.Specifications
         public Expression<Func<TEntity, bool>> Criteria { get; private set; } = default!; 
         public List<Expression<Func<TEntity, object>>> IncludeExpressions { get; } = [];
         public Expression<Func<TEntity,object>> OrderByAsc { get; private set; } 
-        public Expression<Func<TEntity,object>> OrderByDesc { get; private set; } 
+        public Expression<Func<TEntity,object>> OrderByDesc { get; private set; }
 
-
+        public int Skip { get; set; }
+        public int Take { get; set; }
+        public bool IsPagination { get; set; }
 
 
 
@@ -45,6 +47,12 @@ namespace Service.Specifications
             OrderByDesc = expression;
         }
 
+        public void ApplyPagination(int skip , int tack )
+        {
+            IsPagination = true;
+            Skip = skip;
+            Take = tack;
+        }
 
 
     }

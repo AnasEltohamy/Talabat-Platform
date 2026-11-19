@@ -36,9 +36,13 @@ namespace Peresistence.Store.Data
             }
             if (spec.IncludeExpressions is not null )
             {
-                Query = spec.IncludeExpressions.Aggregate(Query,(X,Y)=>X.Include(Y));
-                
+                Query = spec.IncludeExpressions.Aggregate(Query,(X,Y)=>X.Include(Y));    
             }
+            if (spec.IsPagination)
+            {
+                Query= Query.Skip(spec.Skip).Take(spec.Take);
+            }
+
 
             return Query;
 

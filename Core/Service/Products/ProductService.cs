@@ -18,12 +18,16 @@ namespace Service.Products
     {
         
 
-        public async Task<IEnumerable<ProductDTO>> GetAllProductAsync(ProductQueryParameters queryParameters)
+        public async Task<PaginatedResult<ProductDTO>> GetAllProductAsync(ProductQueryParameters queryParameters)
         {
             var Spec = new ProductWithIncludesSpecifications(queryParameters);
             var Products =await _unitOfWork.GetRepository<Product,int>().GetAllAsync(Spec);
+            var Count = Products.Count();
+            var TotalProducts = new TotalProductsSpecifications(queryParameters);
+            var Result = await _unitOfWork.GetRepository<Product, int>().GetAllAsync();
+            var Total = Result.Count();
             var Mappeng = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(Products);
-            return Mappeng;
+            return new PaginatedResult<ProductDTO>(queryParameters.PageIndex, Count , Total, Mappeng);
         }
         public async Task<ProductDTO> GetProductByIdAsync(int id)
         {

@@ -12,11 +12,11 @@ namespace Service.Specifications
     public class ProductWithIncludesSpecifications : BaseSpecifications<Product,int>
     {
 
-        public ProductWithIncludesSpecifications(ProductQueryParameters queryParameters) : base(BuildCriteria(queryParameters))
+        public  ProductWithIncludesSpecifications(ProductQueryParameters queryParameters) : base(BuildCriteria(queryParameters))
         {
             AddInclude(P=>P.ProductType);
             AddInclude(P=>P.ProductBrand);
-
+            ApplyPagination(queryParameters.PageSize *(queryParameters.PageIndex-1), queryParameters.PageSize);
 
             switch(queryParameters.SortingOptions)
             {

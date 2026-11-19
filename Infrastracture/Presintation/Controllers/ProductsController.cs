@@ -19,7 +19,7 @@ namespace Presintation.Controllers
     {
         [Cache(60)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAllProduct([FromQuery] ProductQueryParameters queryParameters )
+        public async Task<ActionResult<IEnumerable<PaginatedResult<ProductDTO>>>> GetAllProduct([FromQuery] ProductQueryParameters queryParameters )
         {
             return Ok(await _serviceManager.productService.GetAllProductAsync(queryParameters));
         }
