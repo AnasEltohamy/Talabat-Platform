@@ -20,15 +20,27 @@ namespace Service.Products
 
         public async Task<PaginatedResult<ProductDTO>> GetAllProductAsync(ProductQueryParameters queryParameters)
         {
+            var Repo = _unitOfWork.GetRepository<Product, int>();
             var Spec = new ProductWithIncludesSpecifications(queryParameters);
-            var Products =await _unitOfWork.GetRepository<Product,int>().GetAllAsync(Spec);
-            var Count = Products.Count();
-            var TotalProducts = new TotalProductsSpecifications(queryParameters);
-            var Result = await _unitOfWork.GetRepository<Product, int>().GetAllAsync();
-            var Total = Result.Count();
+            var Products =await Repo.GetAllAsync(Spec);
+            var PageSize = Products.Count();
+
+            var totalCountSpecification = new TotalProductsSpecifications(queryParameters);
+            var totalCount = await Repo.CountAsync(totalCountSpecification);
+           
             var Mappeng = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(Products);
-            return new PaginatedResult<ProductDTO>(queryParameters.PageIndex, Count , Total, Mappeng);
+           
+            return new PaginatedResult<ProductDTO>
+                (
+                    queryParameters.PageIndex,
+                    PageSize,
+                    totalCount,
+                    Mappeng
+                );
         }
+
+
+
         public async Task<ProductDTO> GetProductByIdAsync(int id)
         {
             var Spec = new ProductWithIncludesSpecifications(id);

@@ -9,11 +9,13 @@ namespace DomainLayer.Contracts.ProductContracts
 {
     public interface IGinaricRepository<TEntity,Tkey> where TEntity : BaseEntity<Tkey>
     {
+        Task<IEnumerable<TEntity>> GetAllAsync();
         Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity, Tkey> Spec);
+
+        Task<TEntity?> GetByIdAsync(Tkey id);
         Task<TEntity?> GetByIdAsync(ISpecification<TEntity, Tkey> Spec);
 
-        Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<TEntity?> GetByIdAsync(Tkey id);
+        Task<int> CountAsync(ISpecification<TEntity, Tkey> Spec);
 
         Task AddAsync(TEntity entity);
         void UpdateAsync(TEntity entity);

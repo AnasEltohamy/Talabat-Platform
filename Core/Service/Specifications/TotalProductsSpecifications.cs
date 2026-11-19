@@ -13,7 +13,6 @@ namespace Service.Specifications
     {
         public TotalProductsSpecifications(ProductQueryParameters queryParameters) :base(BuildCriteria(queryParameters))
         {
-            
         }
         private static Expression<Func<Product, bool>> BuildCriteria(ProductQueryParameters q)
         {

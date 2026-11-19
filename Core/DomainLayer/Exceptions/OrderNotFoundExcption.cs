@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DomainLayer.Exceptions
 {
-    public class OrderNotFoundExcption(Guid guid):NotFoundExcption($"Product With id = {guid} is not found")
+    public class OrderNotFoundExcption(Guid guid):NotFoundExcption($"Order With id = {guid} is not found")
     {
     }
 }

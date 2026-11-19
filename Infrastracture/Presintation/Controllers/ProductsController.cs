@@ -14,12 +14,11 @@ namespace Presintation.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
-    [Authorize(Roles ="Admin")]
     public class ProductsController(IServiceManager _serviceManager) : ControllerBase
     {
         [Cache(60)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PaginatedResult<ProductDTO>>>> GetAllProduct([FromQuery] ProductQueryParameters queryParameters )
+        public async Task<ActionResult<PaginatedResult<ProductDTO>>> GetAllProduct([FromQuery] ProductQueryParameters queryParameters )
         {
             return Ok(await _serviceManager.productService.GetAllProductAsync(queryParameters));
         }

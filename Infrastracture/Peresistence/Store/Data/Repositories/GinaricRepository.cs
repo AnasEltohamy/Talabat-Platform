@@ -26,6 +26,10 @@ namespace Peresistence.Store.Data.Repositories
         {
             return await _context.Set<TEntity>().ToListAsync();
         }
+        public async Task<int> CountAsync(ISpecification<TEntity, Tkey> Spec)
+        {
+            return await SpecificationEvaluator.CreateQuery(_context.Set<TEntity>(), Spec).CountAsync();
+        }
 
         public async Task<TEntity?> GetByIdAsync(ISpecification<TEntity, Tkey> Spec)
         {
@@ -55,6 +59,7 @@ namespace Peresistence.Store.Data.Repositories
         {
              _context.Update(entity);
         }
+
     
     }
 }

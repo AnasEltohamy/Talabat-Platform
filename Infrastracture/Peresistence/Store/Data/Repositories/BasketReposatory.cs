@@ -18,8 +18,8 @@ namespace Peresistence.Store.Data.Repositories
         public async Task<CustomerBasket?> CreateOrUpdateBasketAsync(CustomerBasket basket, TimeSpan? TimeToLive = null)
         {
             var JsonObject = JsonSerializer.Serialize(basket);
-            var Flag= _database.StringSetAsync(basket.Id, JsonObject, TimeToLive?? TimeSpan.FromDays(30));
-            if (Flag is null)
+            var Flag = await _database.StringSetAsync(basket.Id, JsonObject, TimeToLive?? TimeSpan.FromDays(30));
+            if (!Flag)
             {
                 return null;
             }

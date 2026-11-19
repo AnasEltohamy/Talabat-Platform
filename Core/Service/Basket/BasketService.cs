@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DomainLayer.Contracts.BasketContracts;
+using DomainLayer.Exceptions;
 using DomainLayer.Models.BasketModels;
 using ServiceAbstraction;
 using Shared.DTOs.Basket;
@@ -38,7 +39,7 @@ namespace Service.Basket
             }
             else
             {
-                throw new Exception("Basket Not Found !!");
+                throw new BasketNotFoundException("Basket Not Found !!");
             }
            
         }
