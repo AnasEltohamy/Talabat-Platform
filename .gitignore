@@ -480,4 +480,11 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Local Redis setup folder (not part of the repository)
 Tools/
+
+# Angular client (client/)
+# node_modules/ is already ignored above in the Node.js section
+dist/
+.angular/
