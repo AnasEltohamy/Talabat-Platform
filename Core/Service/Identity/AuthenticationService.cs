@@ -30,7 +30,7 @@ namespace Service.Identity
             var User = await _userManager.FindByEmailAsync(login.Email);
             if (User is null)
             {
-                throw new UserNotFoundException($"Email Not Found {login.Email}");
+                throw new UnauthorizedUserException("Email or password is incorrect");
             }
             var Flag = await _userManager.CheckPasswordAsync(User, login.Password);
             if (Flag)
@@ -44,7 +44,7 @@ namespace Service.Identity
             }
             else
             {
-                throw new UnauthorizedUserException("Password OR Email Is Not Valed  :( ");
+                throw new UnauthorizedUserException("Email or password is incorrect");
             }
 
         }
@@ -54,7 +54,7 @@ namespace Service.Identity
             var User = new AppUser()
             {
                 DisplayName= register.DisplayName,
-                UserName = register.UserName,
+                UserName = register.UserName ?? register.Email,
                 PhoneNumber = register.PhoneNumber,
                 Email = register.Email,
             };
@@ -106,7 +106,7 @@ namespace Service.Identity
             }
             if (user.Address is null)
             {
-                   throw new AddressNotFoundException($"Address Of {user.DisplayName} Not Found");
+                return null;
             }
             return _mapper.Map<Address,AddressDTO>(user.Address);    
         }

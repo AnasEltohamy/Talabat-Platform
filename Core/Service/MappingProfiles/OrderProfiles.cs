@@ -19,7 +19,12 @@ namespace Service.MappingProfiles
         {
             CreateMap<AddressDTO, OrderAddress>().ReverseMap();
             CreateMap<Order, OrderToReturnDTO>()
-                .ForMember(D=>D.DeliveryMethod , O=>O.MapFrom(S=>S.DeliveryMethod.ShortName ));
+                .ForMember(d => d.BuyerEmail, o => o.MapFrom(s => s.UserEmail))
+                .ForMember(d => d.ShipToAddress, o => o.MapFrom(s => s.Address))
+                .ForMember(d => d.DeliveryMethod, o => o.MapFrom(s => s.DeliveryMethod.ShortName))
+                .ForMember(d => d.DeliveryCost, o => o.MapFrom(s => s.DeliveryMethod.Cost))
+                .ForMember(d => d.Subtotal, o => o.MapFrom(s => s.SubTotal))
+                .ForMember(d => d.Status, o => o.MapFrom(s => s.OrderStatus.ToString()));
 
             CreateMap<OrderItem, OrderItemDTO>()
                 .ForMember(D => D.ProductName, O => O.MapFrom(S => S.Product.ProductName))

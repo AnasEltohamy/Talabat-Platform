@@ -37,6 +37,9 @@ namespace Peresistence.Store.Data.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
+                    b.Property<string>("PaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("SubTotal")
                         .HasColumnType("decimal(8,2)");
 
@@ -59,6 +62,9 @@ namespace Peresistence.Store.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(8,2)");
+
                     b.Property<string>("DeliveryTime")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -68,9 +74,6 @@ namespace Peresistence.Store.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(8,2)");
 
                     b.Property<string>("ShortName")
                         .IsRequired()

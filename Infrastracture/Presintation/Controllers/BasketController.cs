@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Presintation.Controllers
 {
     [ApiController]
-    [Route("api/[Controller]")]
+    [Route("api/baskets")]
     public class BasketController(IServiceManager _serviceManager): ControllerBase
     {
         [HttpPost]
@@ -26,7 +26,7 @@ namespace Presintation.Controllers
             return Ok(await _serviceManager.basketService.GetBasketAsync(id));
         }
 
-        [HttpDelete("{Key}")]
+        [HttpDelete]
         public async Task<ActionResult<bool>> DeleteBasketAsync(string Key)
         {
             return Ok(await _serviceManager.basketService.DeleteBasketAsync(Key));

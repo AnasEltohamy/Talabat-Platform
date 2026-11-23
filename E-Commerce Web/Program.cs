@@ -86,7 +86,11 @@ namespace E_Commerce_Web
                 };
             });
 
-
+            builder.Services.AddCors(opt => 
+                opt.AddPolicy("AngularClient", p => p
+                   .WithOrigins("http://localhost:4200", "https://localhost:4200")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()));
 
 
             var app = builder.Build();
@@ -108,7 +112,7 @@ namespace E_Commerce_Web
             }
             app.UseStaticFiles();
             app.UseHttpsRedirection();
-
+            app.UseCors("AngularClient");
             app.UseAuthentication();
             app.UseAuthorization();
 

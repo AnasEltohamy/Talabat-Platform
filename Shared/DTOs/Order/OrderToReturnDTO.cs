@@ -9,18 +9,15 @@ namespace Shared.DTOs.Order
 {
     public class OrderToReturnDTO
     {
-        public Guid id { get; set; }
-        public string UserEmail { get; set; } = default!;
-       
-
-        public ICollection<OrderItemDTO>? Items { get; set; } = [];
+        public Guid Id { get; set; }
+        public string BuyerEmail { get; set; } = default!;
+        public ICollection<OrderItemDTO> Items { get; set; } = [];
         public string DeliveryMethod { get; set; } = default!;
-        public decimal SubTotal { get; set; }
-
+        public decimal DeliveryCost { get; set; }
+        public decimal Subtotal { get; set; }
         public decimal Total { get; set; }
         public DateTimeOffset OrderDate { get; set; }
-        public string OrderStatus { get; set; } = default!;
-
-        public AddressDTO Address { get; set; } = default!;
+        public string Status { get; set; } = default!;
+        public AddressDTO ShipToAddress { get; set; } = default!;
     }
 }

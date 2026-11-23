@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Service.Basket;
 using Service.Identity;
 using Service.Orders;
+using Service.Payment;
 using Service.Products;
 using ServiceAbstraction;
 
@@ -38,6 +39,10 @@ namespace Service
             (
                 () => new OrderService( basketReposatory,  mapper,  unitOfWork)
             );
+        private readonly Lazy<IPaymentService> LazyPaymentService = new Lazy<IPaymentService>
+            (
+                () => new PaymentService(_configuration, basketReposatory, unitOfWork, mapper)
+            );
 
 
 
@@ -45,5 +50,6 @@ namespace Service
         public IBasketService basketService => LazyBasketManager.Value;
         public IAuthenticationService authenticationService => LazyAuthenticationService.Value;
         public IOrderService OrderService => LazyOrderService.Value;
+        public IPaymentService PaymentService => LazyPaymentService.Value;
     }
 }

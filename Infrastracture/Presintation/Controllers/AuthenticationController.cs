@@ -27,14 +27,14 @@ namespace Presintation.Controllers
             return Ok(await _serviceManager.authenticationService.RegisterAsync(registerDTO));
         }
 
-        [HttpGet("CheckEmail")]
+        [HttpGet("emailexists")]
         public async Task<ActionResult<bool>> CheckEmail(string email)
         {
             return Ok( await _serviceManager.authenticationService.CheckEmailAsync(email));
         }
 
         [Authorize]
-        [HttpGet("CurrentUser")]
+        [HttpGet]
         public async Task<ActionResult<UserDTO>> GetCurrentUser()
         {
             var user =await _serviceManager.authenticationService.GetCurrentUserAsync(User.FindFirstValue(ClaimTypes.Email)!);
@@ -42,7 +42,7 @@ namespace Presintation.Controllers
         }
 
         [Authorize]
-        [HttpGet("CurrentUserAddress")]
+        [HttpGet("address")]
         public async Task<ActionResult<AddressDTO>> GetCurrentUserAddress()
         {
             var userAddress = await _serviceManager.authenticationService.GetCurrentUserAddressAsync(User.FindFirstValue(ClaimTypes.Email)!);

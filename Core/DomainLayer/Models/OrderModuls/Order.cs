@@ -43,6 +43,7 @@ namespace DomainLayer.Models.OrderModel
         public int DeliveryMethodId { get; set; } //FK
         public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now!;
         public OrderStatus OrderStatus { get; set; } = default!;
-        public decimal GetTotal() => SubTotal + DeliveryMethod.Price;
+        public decimal GetTotal() => SubTotal + DeliveryMethod.Cost;
+        public string? PaymentIntentId { get; set; }
     }
 }

@@ -8,11 +8,10 @@ namespace Shared.ErrorModels
 {
     public class ErrorToReturn
     {
-  
-        public int StatusCode { get; set; }
-        public string ErrorMassage { get; set; } = default!;
 
-        public List<string>? Errors { get; set; } 
+        public int StatusCode { get; set; }
+        public string Message { get; set; } = default!;
+        public List<string>? Errors { get; set; }
 
 
     }

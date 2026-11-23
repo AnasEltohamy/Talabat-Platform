@@ -71,7 +71,7 @@ namespace Service.Orders
 
 
             // 2- AddressDTO => Address
-            var address = _mapper.Map<AddressDTO, OrderAddress>(orderDTO.addressDTO);
+            var address = _mapper.Map<AddressDTO, OrderAddress>(orderDTO.ShipToAddress);
 
             // 3- DeliveryMethodId => Get DeliveryMethod(Name) By Method
             var deliveryMethod = await _unitOfWork.GetRepository<DeliveryMethod, int>().GetByIdAsync(orderDTO.DeliveryMethodId)
@@ -83,7 +83,7 @@ namespace Service.Orders
 
             //5- Create Order
             var order = new Order(email, address, deliveryMethod, listOfOrderItems, total);
-
+            order.PaymentIntentId = userBasket.PaymentIntentId;
             await _unitOfWork.GetRepository<Order ,Guid>().AddAsync(order);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<Order , OrderToReturnDTO>(order);

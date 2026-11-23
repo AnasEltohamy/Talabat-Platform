@@ -9,49 +9,51 @@ namespace E_Commerce_Web.CustomMiddleWares
         private readonly RequestDelegate _nextRequest;
         private readonly ILogger _logger;
 
-        public CustomExceptionHandlerMiddleWares(RequestDelegate NextRequest,ILogger<CustomExceptionHandlerMiddleWares> logger)
+        public CustomExceptionHandlerMiddleWares(RequestDelegate NextRequest, ILogger<CustomExceptionHandlerMiddleWares> logger)
         {
             _nextRequest = NextRequest;
             _logger = logger;
         }
 
-
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            try {
+            try
+            {
                 await _nextRequest.Invoke(httpContext);
+
+                if (httpContext.Response.HasStarted) return;
+
                 if (httpContext.Response.StatusCode == StatusCodes.Status404NotFound)
                 {
-                    var Response = new ErrorToReturn()
+                    await httpContext.Response.WriteAsJsonAsync(new ErrorToReturn()
                     {
                         StatusCode = StatusCodes.Status404NotFound,
-                        ErrorMassage = $"End Point {httpContext.Request.Path} Not Found"
-                    };
-
-                    await httpContext.Response.WriteAsJsonAsync(Response);
+                        Message = $"End Point {httpContext.Request.Path} Not Found"
+                    });
+                }
+                else if (httpContext.Response.StatusCode == StatusCodes.Status401Unauthorized)
+                {
+                    await httpContext.Response.WriteAsJsonAsync(new ErrorToReturn()
+                    {
+                        StatusCode = StatusCodes.Status401Unauthorized,
+                        Message = "Unauthorized"
+                    });
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Custom Exception Handler MiddleWares Wrong");
-                
-                 await HandelExceptionAsync(httpContext, ex);
-
+                await HandelExceptionAsync(httpContext, ex);
             }
         }
 
         private async static Task HandelExceptionAsync(HttpContext httpContext, Exception ex)
         {
-            // 1- Response Object
-
             var Response = new ErrorToReturn()
             {
-                //StatusCode = httpContext.Response.StatusCode,
-                ErrorMassage = ex.Message,
+                Message = ex.Message,
             };
 
-
-            // 2- Set status Code For Response
             Response.StatusCode = ex switch
             {
                 NotFoundExcption => StatusCodes.Status404NotFound,
@@ -59,8 +61,8 @@ namespace E_Commerce_Web.CustomMiddleWares
                 BadrequestExcption Badrequest => GetBadrequestErrors(Badrequest, Response),
                 _ => StatusCodes.Status500InternalServerError
             };
-           
-            // 3- Return Object As JSON
+
+            httpContext.Response.StatusCode = Response.StatusCode;   // السطر الناقص
 
             await httpContext.Response.WriteAsJsonAsync(Response);
         }
