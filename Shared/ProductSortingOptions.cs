@@ -8,9 +8,10 @@ namespace Shared
 {
     public enum ProductSortingOptions
     {
-        SortByNameAsc=0,
-        SortByNameDesc=1,
-        SortByPriceAsc = 2,
-        SortByPriceDesc = 3
+        name = 0,
+        nameِAsc = 0,   
+        priceAsc = 1,
+        priceDesc = 2
+
     }
 }

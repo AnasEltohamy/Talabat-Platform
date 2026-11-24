@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DomainLayer.Models.OrderModuls
@@ -12,6 +13,7 @@ namespace DomainLayer.Models.OrderModuls
         public string ShortName { get; set; } = default!;
         public string Description { get; set; } = default!;
         public string DeliveryTime { get; set; } = default!;
+        [JsonPropertyName("Price")]
         public decimal Cost { get; set; }
     }
 }

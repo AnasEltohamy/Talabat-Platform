@@ -9,7 +9,7 @@ namespace Shared.ErrorModels
     public class ValidationErrorToReturn
     {
         public int StatusCode { get; set; }
-        public string ErrorMassage { get; set; } = default!;
+        public string Message { get; set; } = default!;
         public IEnumerable<ValidationError> ValidationErrors { get; set; } = [];
     }
 }

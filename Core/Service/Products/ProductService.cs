@@ -22,7 +22,7 @@ namespace Service.Products
         {
             var Repo = _unitOfWork.GetRepository<Product, int>();
             var Spec = new ProductWithIncludesSpecifications(queryParameters);
-            var Products =await Repo.GetAllAsync(Spec);
+            var Products = await Repo.GetAllAsync(Spec);
             var PageSize = Products.Count();
 
             var totalCountSpecification = new TotalProductsSpecifications(queryParameters);

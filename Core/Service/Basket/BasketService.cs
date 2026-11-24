@@ -39,8 +39,7 @@ namespace Service.Basket
             }
             else
             {
-                throw new BasketNotFoundException("Basket Not Found !!");
-            }
+                return new CustomerBasketDTO { Id = id };            }
            
         }
     }

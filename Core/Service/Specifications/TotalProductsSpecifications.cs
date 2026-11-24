@@ -18,7 +18,7 @@ namespace Service.Specifications
         {
             int? typeId = q.TypeId;
             int? brandId = q.BrandId;
-            string? search = q.SearchValue?.ToLower();
+            string? search = q.search?.ToLower();
 
             return P =>
                 (!typeId.HasValue || P.TypeId == typeId.Value) &&

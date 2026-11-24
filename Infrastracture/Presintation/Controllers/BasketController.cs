@@ -27,9 +27,9 @@ namespace Presintation.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult<bool>> DeleteBasketAsync(string Key)
+        public async Task<ActionResult<bool>> DeleteBasketAsync(string id)
         {
-            return Ok(await _serviceManager.basketService.DeleteBasketAsync(Key));
+            return Ok(await _serviceManager.basketService.DeleteBasketAsync(id));
         }
     }
 }

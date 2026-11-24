@@ -19,7 +19,7 @@ namespace E_Commerce_Web.Factories
             var Response = new ValidationErrorToReturn()
             {
                 StatusCode = StatusCodes.Status400BadRequest,
-                ErrorMassage = "Validation Error",
+                Message = "Validation Error",
                 ValidationErrors = Errors
             };
 

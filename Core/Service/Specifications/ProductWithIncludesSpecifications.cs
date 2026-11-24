@@ -18,16 +18,15 @@ namespace Service.Specifications
             AddInclude(P=>P.ProductBrand);
             ApplyPagination(queryParameters.PageSize *(queryParameters.PageIndex-1), queryParameters.PageSize);
 
-            switch(queryParameters.SortingOptions)
+            switch(queryParameters.sort)
             {
-                case ProductSortingOptions.SortByNameAsc: AddOrderByAsc(P=>P.Name);
+                case ProductSortingOptions.name: AddOrderByAsc(P=>P.Name);
                     break;
-                case ProductSortingOptions.SortByPriceAsc : AddOrderByAsc(P=>P.Price);
+                case ProductSortingOptions.priceAsc : AddOrderByAsc(P=>P.Price);
                     break;
-                case ProductSortingOptions.SortByNameDesc: AddOrderByDesc(P=>P.Name);
+                case ProductSortingOptions.priceDesc: AddOrderByDesc(P=>P.Price);
                     break;
-                case ProductSortingOptions.SortByPriceDesc: AddOrderByDesc(p=>p.Price);
-                    break;
+                
             }
         }
         public ProductWithIncludesSpecifications(int id ):base(P=>P.Id ==id)
@@ -43,7 +42,7 @@ namespace Service.Specifications
         {
             int? typeId = q.TypeId;
             int? brandId = q.BrandId;
-            string? search = q.SearchValue?.ToLower();
+            string? search = q.search?.ToLower();
 
             return P =>
                 (!typeId.HasValue || P.TypeId == typeId.Value) &&
