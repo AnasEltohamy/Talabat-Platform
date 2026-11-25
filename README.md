@@ -10,12 +10,9 @@ An e-commerce platform whose core is a **RESTful backend built with ASP.NET Core
 ![Stripe](https://img.shields.io/badge/Stripe-635BFF?logo=stripe&logoColor=white)
 ![Angular](https://img.shields.io/badge/Angular-11-DD0031?logo=angular&logoColor=white)
 
-> **Status legend:** ✅ implemented · 🚧 in progress
-
 ## Table of Contents
 
 - [Features](#features)
-- [Project Status](#project-status)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
@@ -24,65 +21,47 @@ An e-commerce platform whose core is a **RESTful backend built with ASP.NET Core
 - [Payment Flow](#payment-flow)
 - [Error Handling](#error-handling)
 - [Getting Started](#getting-started)
-- [Roadmap](#roadmap)
 - [Author](#author)
 
 ## Features
 
-**Authentication and users** ✅
+**Authentication and users**
 - Register and login with ASP.NET Core Identity; JWT bearer tokens (HMAC SHA-256, 1-hour lifetime) carrying user id, name, email, and role claims.
 - Email availability check, current-user endpoint, and per-user address management.
 - `Admin` and `SuperAdmin` roles are seeded, ready for role-based authorization of future admin features.
 
-**Product catalog** ✅
+**Product catalog**
 - Filtering by type and brand, case-insensitive name search, sorting (name, price ascending, price descending), and pagination with a total count that respects the filters.
 - Product details, brands, and types endpoints.
 - Product images served as static files, with full picture URLs built through an AutoMapper value resolver.
 
-**Caching** ✅
+**Caching**
 - Redis response caching through a custom `[Cache(seconds)]` action filter, applied to the product list and product details (60 seconds). The cache key is the request path plus the sorted query parameters, and the authorization check runs before the cache is read.
 
-**Shopping basket** ✅
+**Shopping basket**
 - Basket stored in **Redis** as JSON with a 30-day expiry; works for guests (no login required).
 - Create or update, get (an unknown id returns an empty basket), and delete.
 
-**Orders** ✅
+**Orders**
 - An order is created from a basket; product prices are always re-read from the database, never trusted from the client.
 - Delivery methods, order history per user (newest first), and order lookup by id.
 - Order total = items subtotal + delivery cost.
 
-**Payments (Stripe)** ✅ payment intents · 🚧 payment confirmation
+**Payments (Stripe)**
 - A Stripe PaymentIntent is created or updated from the basket, with the amount computed on the server (database prices plus the delivery cost) in USD.
 - The `PaymentIntentId` is stored on the order.
-- Updating the order status after the payment is confirmed (webhook) is in progress, see [Project Status](#project-status).
+- A Stripe webhook endpoint verifies the event signature and updates the order status to `PaymentReceived` or `PaymentFailed`.
 
-**Angular client integration** ✅
+**Angular client integration**
 - The API is consumed by an Angular storefront in `client/`: shop with search, sorting and paging, basket, account, checkout with delivery methods and Stripe card payment, and order history. CORS is configured for the Angular development origin.
 
-**Engineering practices** ✅
+**Engineering practices**
 - Onion Architecture with a strict dependency direction (the core never depends on infrastructure).
 - Generic Repository, Unit of Work, and **Specification pattern** (criteria, includes, ordering, pagination, count).
 - Service Manager that creates services lazily; AutoMapper profiles and custom value resolvers; DTOs for every request and response.
 - Global exception-handling middleware with a consistent JSON error contract, plus custom responses for validation errors and unknown endpoints.
 - EF Core migrations with two DbContexts (store and identity), and automatic migration and data seeding on startup.
 - Swagger / OpenAPI documentation.
-
-## Project Status
-
-| Area | Status |
-|---|---|
-| Authentication, accounts, JWT | ✅ |
-| Product catalog (filter, search, sort, pagination) | ✅ |
-| Redis basket and response caching | ✅ |
-| Orders and delivery methods | ✅ |
-| Stripe payment intent creation | ✅ |
-| Stripe webhook: order status after payment (`Pending` → `PaymentReceived` / `PaymentFailed`) | 🚧 |
-| Angular client connected to the API | ✅ |
-| Deployment (API and client) | 🚧 |
-| Swagger JWT authorization button | 🚧 |
-| Postman collection | 🚧 |
-
-> The `OrderStatus` values `PaymentReceived` and `PaymentFailed` already exist. Until the webhook is implemented, orders stay in `Pending`.
 
 ## Architecture
 
@@ -192,7 +171,7 @@ erDiagram
 
 ## API Reference
 
-Base URL (development): `https://localhost:5001`. Protected endpoints require the header `Authorization: Bearer <token>`. 18 endpoints.
+Base URL (development): `https://localhost:5001`. Protected endpoints require the header `Authorization: Bearer <token>`. 19 endpoints.
 
 ### Authentication
 
@@ -261,6 +240,7 @@ Response:
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | POST | `/api/payments/{basketId}` | Bearer | Create or update the Stripe PaymentIntent for a basket |
+| POST | `/api/payments/webhook` | Stripe signature | Receive Stripe events and update the order status |
 
 <details>
 <summary>Example request bodies</summary>
@@ -304,7 +284,7 @@ Response:
 2. The client asks the API for a payment intent (`POST /api/payments/{basketId}`). The API recomputes the total from database prices plus the delivery cost, creates or updates the Stripe PaymentIntent, and returns the basket with the `clientSecret` and `paymentIntentId`.
 3. The client creates the order (`POST /api/Orders`); the `PaymentIntentId` is stored on the order.
 4. The client confirms the card payment with Stripe.js using the `clientSecret`.
-5. 🚧 Stripe notifies the API through a webhook, and the order status moves from `Pending` to `PaymentReceived` or `PaymentFailed`.
+5. Stripe notifies the API through a webhook (`POST /api/payments/webhook`). The API verifies the signature, finds the order by its `PaymentIntentId`, and moves its status from `Pending` to `PaymentReceived` or `PaymentFailed`.
 
 Use Stripe **test mode** keys and test cards (for example `4242 4242 4242 4242`). The secret key stays on the server; only the publishable key is used in the client.
 
@@ -364,12 +344,20 @@ cd Talabat-Platform
    | `URLs:baseUrl` | Base URL used to build product picture URLs |
    | `JWTOptions:SecretKey` | Signing key: replace the placeholder with your own long random secret and never commit it |
    | `StripeSettings:SecretKey` | Stripe secret key (kept empty in the repository) |
+   | `StripeSettings:WhSecret` | Stripe webhook signing secret (kept empty in the repository) |
 
-2. Store the Stripe secret key with .NET User Secrets, so it never reaches the repository:
+2. Store the Stripe keys with .NET User Secrets, so they never reach the repository:
 
    ```bash
    dotnet user-secrets init --project "E-Commerce Web"
    dotnet user-secrets set "StripeSettings:SecretKey" "sk_test_xxxxxxxx" --project "E-Commerce Web"
+   ```
+
+   To receive payment events locally, install the [Stripe CLI](https://docs.stripe.com/stripe-cli), forward the events to the API, and store the signing secret it prints (`whsec_...`):
+
+   ```bash
+   stripe listen --forward-to https://localhost:5001/api/payments/webhook --skip-verify
+   dotnet user-secrets set "StripeSettings:WhSecret" "whsec_xxxxxxxx" --project "E-Commerce Web"
    ```
 
 3. Start the API from the web project folder (the seed files are read with a relative path):
@@ -383,7 +371,7 @@ cd Talabat-Platform
 
 5. Open Swagger at `https://localhost:5001/swagger`.
 
-> Swagger UI does not have an Authorize button yet, so test the protected endpoints with Postman, curl, or the Angular client, using the `Authorization: Bearer <token>` header.
+> Protected endpoints need a bearer token: call `POST /api/Authentication/Login`, then send the returned token in the `Authorization: Bearer <token>` header (Postman, curl, or the Angular client).
 
 ### Run the Angular client
 
@@ -396,13 +384,6 @@ npm start
 Open `http://localhost:4200`. The client expects the API at `https://localhost:5001/api/` (`client/src/environments/environment.ts`). To try the card payment, put your own Stripe **publishable** key in `client/src/app/checkout/checkout-payment/checkout-payment.component.ts`.
 
 > The Angular storefront is a ready-made client that is connected to this API. The focus of this repository is the backend.
-
-## Roadmap
-
-- [ ] Stripe webhook to update the order status after payment (in progress)
-- [ ] Deployment of the API and the client (in progress)
-- [ ] Swagger documentation improvements, including JWT authorization
-- [ ] Postman collection for the API
 
 ## Author
 
