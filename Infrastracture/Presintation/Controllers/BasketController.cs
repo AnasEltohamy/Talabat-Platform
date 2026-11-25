@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ServiceAbstraction;
 using Shared.DTOs.Basket;
 using System;
@@ -9,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace Presintation.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/baskets")]
+    
     public class BasketController(IServiceManager _serviceManager): ControllerBase
     {
         [HttpPost]

@@ -9,7 +9,7 @@ namespace Shared
     public enum ProductSortingOptions
     {
         name = 0,
-        nameِAsc = 0,   
+        nameAsc = 0,   
         priceAsc = 1,
         priceDesc = 2
 

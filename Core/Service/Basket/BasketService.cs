@@ -40,7 +40,6 @@ namespace Service.Basket
             else
             {
                 return new CustomerBasketDTO { Id = id };            }
-           
-        }
+            }
     }
 }
