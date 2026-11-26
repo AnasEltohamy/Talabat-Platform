@@ -1,6 +1,8 @@
 # Talabat Platform
 
-An e-commerce platform whose core is a **RESTful backend built with ASP.NET Core 8 Web API** using Onion Architecture. It provides JWT authentication with ASP.NET Core Identity, a paginated, filterable and sortable product catalog, a Redis-backed basket with response caching, an order workflow with delivery methods, and Stripe payment intents. The API is integrated with an Angular storefront client (the `client/` folder).
+An e-commerce platform whose core is a **RESTful backend built with ASP.NET Core 8 Web API** using Onion Architecture. It provides JWT authentication with ASP.NET Core Identity, a paginated, filterable and sortable product catalog, a Redis-backed basket with response caching, an order workflow with delivery methods, and Stripe payments with webhook-driven order status. The API is consumed by a responsive **Angular 11 storefront** (the `client/` folder).
+
+![Talabat Platform](docs/images/poster.png)
 
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-Web%20API-512BD4)
@@ -12,6 +14,7 @@ An e-commerce platform whose core is a **RESTful backend built with ASP.NET Core
 
 ## Table of Contents
 
+- [Screenshots](#screenshots)
 - [Features](#features)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
@@ -20,8 +23,29 @@ An e-commerce platform whose core is a **RESTful backend built with ASP.NET Core
 - [API Reference](#api-reference)
 - [Payment Flow](#payment-flow)
 - [Error Handling](#error-handling)
-- [Getting Started](#getting-started)
+- [Run it locally](#run-it-locally)
+- [Try the full flow](#try-the-full-flow)
+- [Troubleshooting](#troubleshooting)
+- [Security notes](#security-notes)
 - [Author](#author)
+
+## Screenshots
+
+| Home | Shop |
+|---|---|
+| ![Home](docs/images/home.png) | ![Shop](docs/images/shop.png) |
+
+| Product details | Basket |
+|---|---|
+| ![Product details](docs/images/product-details.png) | ![Basket](docs/images/basket.png) |
+
+| Checkout (address, delivery, review, payment) | Order details |
+|---|---|
+| ![Checkout](docs/images/checkout.png) | ![Order details](docs/images/order-details.png) |
+
+| Swagger UI |
+|---|
+| ![Swagger](docs/images/swagger.png) |
 
 ## Features
 
@@ -46,14 +70,18 @@ An e-commerce platform whose core is a **RESTful backend built with ASP.NET Core
 - An order is created from a basket; product prices are always re-read from the database, never trusted from the client.
 - Delivery methods, order history per user (newest first), and order lookup by id.
 - Order total = items subtotal + delivery cost.
+- Order status: `Pending` -> `PaymentReceived` or `PaymentFailed`.
 
 **Payments (Stripe)**
 - A Stripe PaymentIntent is created or updated from the basket, with the amount computed on the server (database prices plus the delivery cost) in USD.
 - The `PaymentIntentId` is stored on the order.
-- A Stripe webhook endpoint verifies the event signature and updates the order status to `PaymentReceived` or `PaymentFailed`.
+- A **Stripe webhook** endpoint verifies the event signature and moves the order status from `Pending` to `PaymentReceived` (`payment_intent.succeeded`) or `PaymentFailed` (`payment_intent.payment_failed`).
 
-**Angular client integration**
-- The API is consumed by an Angular storefront in `client/`: shop with search, sorting and paging, basket, account, checkout with delivery methods and Stripe card payment, and order history. CORS is configured for the Angular development origin.
+**Angular storefront (`client/`)**
+- Home, shop (search, sorting, brand and type filters, paging), product details, basket, login and register.
+- A four-step checkout: address, delivery method, review, and Stripe card payment, followed by a confirmation page.
+- Order history and order details with a payment status badge.
+- Custom not-found and server-error pages. Built with Bootstrap 4 (Bootswatch United), ngx-bootstrap, and xng-breadcrumb.
 
 **Engineering practices**
 - Onion Architecture with a strict dependency direction (the core never depends on infrastructure).
@@ -76,6 +104,7 @@ flowchart LR
     SA --> Dom
     SA --> Shared["Shared<br/>(DTOs, error models)"]
     Client["Angular client<br/>(client/)"] -->|HTTPS + JWT| Web
+    Stripe["Stripe"] -->|webhook| Web
 ```
 
 Request flow: `Controller -> IServiceManager -> Service -> IUnitOfWork / IBasketReposatory / ICacheRepository -> Repository -> SQL Server / Redis`, then AutoMapper maps entities to DTOs on the way back. Contracts (`IGinaricRepository`, `IUnitOfWork`, `ISpecification`, `IBasketReposatory`, `ICacheRepository`) live in `DomainLayer`, and their implementations live in `Peresistence`.
@@ -89,10 +118,10 @@ Request flow: `Controller -> IServiceManager -> Service -> IUnitOfWork / IBasket
 | Database | SQL Server |
 | Basket store / response cache | Redis (StackExchange.Redis) |
 | Authentication | ASP.NET Core Identity, JWT Bearer |
-| Payments | Stripe (`Stripe.net`, payment intents) |
+| Payments | Stripe (`Stripe.net`, payment intents, webhooks) |
 | Mapping | AutoMapper |
 | API docs | Swagger (Swashbuckle) |
-| Client | Angular 11 storefront (`client/`) |
+| Client | Angular 11, Bootstrap 4 (Bootswatch United), ngx-bootstrap, ngx-toastr, xng-breadcrumb |
 | Patterns | Onion Architecture, Repository, Unit of Work, Specification, Service Manager |
 
 ## Project Structure
@@ -108,7 +137,8 @@ E-Commerce-Platform-Soluotion.slnx
 │   └── Presintation         # API controllers, cache filter
 ├── Shared                   # DTOs, error models, query parameters
 ├── E-Commerce Web           # Startup project: Program, middleware, config, static images
-└── client                   # Angular storefront
+├── client                   # Angular storefront
+└── docs/images              # README images
 ```
 
 ## Data Model
@@ -235,6 +265,23 @@ Response:
 | GET | `/api/Orders/{id}` | Bearer | Get an order by id (GUID) |
 | GET | `/api/Orders/deliveryMethods` | Bearer | List delivery methods |
 
+An order is returned with this shape:
+
+```json
+{
+  "id": "cbcb59ac-...",
+  "buyerEmail": "anas@gmail.com",
+  "items": [ { "productId": 1, "productName": "...", "pictureUrl": "...", "price": 200, "quantity": 1 } ],
+  "deliveryMethod": "DHL",
+  "deliveryCost": 5,
+  "subtotal": 200,
+  "total": 205,
+  "orderDate": "2026-11-26T10:00:00+00:00",
+  "status": "PaymentReceived",
+  "shipToAddress": { "firstName": "...", "lastName": "...", "street": "...", "city": "...", "country": "..." }
+}
+```
+
 ### Payments
 
 | Method | Endpoint | Access | Description |
@@ -280,13 +327,29 @@ Response:
 
 ## Payment Flow
 
+```mermaid
+sequenceDiagram
+    participant C as Angular client
+    participant A as API
+    participant S as Stripe
+    C->>A: POST /api/baskets (items + delivery method)
+    C->>A: POST /api/payments/{basketId}
+    A->>S: create or update PaymentIntent (server-side amount)
+    A-->>C: basket with clientSecret
+    C->>A: POST /api/Orders (stores PaymentIntentId, status Pending)
+    C->>S: confirm card payment (Stripe.js + clientSecret)
+    S-->>A: webhook payment_intent.succeeded / payment_failed
+    A->>A: verify signature, find order by PaymentIntentId
+    A->>A: status = PaymentReceived / PaymentFailed
+```
+
 1. The client saves the basket with the chosen delivery method (`POST /api/baskets`).
 2. The client asks the API for a payment intent (`POST /api/payments/{basketId}`). The API recomputes the total from database prices plus the delivery cost, creates or updates the Stripe PaymentIntent, and returns the basket with the `clientSecret` and `paymentIntentId`.
-3. The client creates the order (`POST /api/Orders`); the `PaymentIntentId` is stored on the order.
+3. The client creates the order (`POST /api/Orders`); the `PaymentIntentId` is stored on the order and the status starts as `Pending`.
 4. The client confirms the card payment with Stripe.js using the `clientSecret`.
 5. Stripe notifies the API through a webhook (`POST /api/payments/webhook`). The API verifies the signature, finds the order by its `PaymentIntentId`, and moves its status from `Pending` to `PaymentReceived` or `PaymentFailed`.
 
-Use Stripe **test mode** keys and test cards (for example `4242 4242 4242 4242`). The secret key stays on the server; only the publishable key is used in the client.
+Use Stripe **test mode** keys and test cards. The secret key and webhook secret stay on the server; only the publishable key is used in the client.
 
 ## Error Handling
 
@@ -313,67 +376,88 @@ Identity errors (for example a weak password) return the list in `errors`. Model
 }
 ```
 
-## Getting Started
+## Run it locally
 
-### Prerequisites
+### 1. Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- SQL Server (the default connection strings use a local instance with Windows authentication)
-- Redis, for example with Docker:
-  ```bash
-  docker run -d --name redis -p 6379:6379 redis
-  ```
-- Node.js 14 for the Angular client (Angular 11). With newer Node versions, run `npm start` with `NODE_OPTIONS=--openssl-legacy-provider`.
-- A trusted HTTPS development certificate: `dotnet dev-certs https --trust`
-- A Stripe account in test mode, to try the payment step
+| Tool | Version / notes |
+|---|---|
+| [.NET SDK](https://dotnet.microsoft.com/download) | 8.0 or newer. The solution file is `.slnx`, which needs the .NET 9 SDK (or Visual Studio 2022 17.13+). With the .NET 8 SDK, open or build the `E-Commerce Web/E-Commerce Web.csproj` project directly |
+| SQL Server | Any edition (Express or LocalDB is fine) |
+| Redis | Port `6379`. On Windows the easiest way is Docker: `docker run -d --name redis -p 6379:6379 redis` |
+| Node.js + npm | Node **14** for Angular 11. With a newer Node, set `NODE_OPTIONS=--openssl-legacy-provider` before `npm start` |
+| HTTPS dev certificate | `dotnet dev-certs https --trust` |
+| Stripe account (test mode) | Needed for the payment step. A free account is enough |
+| [Stripe CLI](https://docs.stripe.com/stripe-cli) | Forwards webhook events to your local API |
 
-### Run the API
+### 2. What you must change before running
+
+Nothing secret is stored in this repository, so a fresh clone needs these values from you:
+
+| # | Where | What to set | Required for |
+|---|---|---|---|
+| 1 | `E-Commerce Web/appsettings.json` -> `ConnectionStrings:StoreConnection` and `IdentityStoreConnection` | Your SQL Server instance. The default is `server=.` with Windows authentication. For SQL authentication use `server=YOUR_SERVER;Database=talabat_DB;User Id=...;Password=...;TrustServerCertificate=true` | Everything |
+| 2 | `ConnectionStrings:RedisConnection` | Redis host, default `localhost` | Basket, product cache |
+| 3 | `JWTOptions:SecretKey` (User Secrets) | A long random string, at least 32 characters | Login |
+| 4 | `StripeSettings:SecretKey` (User Secrets) | Your `sk_test_...` key | Payment |
+| 5 | `StripeSettings:WebhookSecret` (User Secrets) | The `whsec_...` printed by `stripe listen` | Order status update |
+| 6 | `client/src/app/checkout/checkout-payment/checkout-payment.component.ts` | Your `pk_test_...` publishable key in `Stripe('pk_test_...')`. It must belong to the same Stripe account as the secret key | Payment |
+| 7 | `URLs:baseUrl` and `JWTOptions:issuer` / `audience` | Only if you change the API URL or port (default `https://localhost:5001/`) | Product images, JWT |
+| 8 | `client/src/environments/environment.ts` -> `apiUrl` | Only if you change the API URL | Client |
+
+Get the Stripe keys from the [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys) (test mode): the **Secret key** (`sk_test_...`) and the **Publishable key** (`pk_test_...`).
+
+### 3. Run the API
 
 ```bash
 git clone https://github.com/AnasEltohamy/Talabat-Platform.git
 cd Talabat-Platform
 ```
 
-1. Review `E-Commerce Web/appsettings.json`:
+Store the secrets with .NET User Secrets, so they never reach Git:
 
-   | Key | Purpose |
-   |---|---|
-   | `ConnectionStrings:StoreConnection` | Store database (`talabat_DB`) |
-   | `ConnectionStrings:IdentityStoreConnection` | Identity database (`talabat_DB.Identity`) |
-   | `ConnectionStrings:RedisConnection` | Redis host (default `localhost`) |
-   | `URLs:baseUrl` | Base URL used to build product picture URLs |
-   | `JWTOptions:SecretKey` | Signing key: replace the placeholder with your own long random secret and never commit it |
-   | `StripeSettings:SecretKey` | Stripe secret key (kept empty in the repository) |
-   | `StripeSettings:WhSecret` | Stripe webhook signing secret (kept empty in the repository) |
+```bash
+dotnet user-secrets init --project "E-Commerce Web"
+dotnet user-secrets set "JWTOptions:SecretKey" "put-a-long-random-secret-of-at-least-32-characters" --project "E-Commerce Web"
+dotnet user-secrets set "StripeSettings:SecretKey" "sk_test_xxxxxxxx" --project "E-Commerce Web"
+```
 
-2. Store the Stripe keys with .NET User Secrets, so they never reach the repository:
+> Alternatively, set environment variables instead: `JWTOptions__SecretKey`, `StripeSettings__SecretKey`, `StripeSettings__WebhookSecret` (a double underscore replaces `:`).
 
-   ```bash
-   dotnet user-secrets init --project "E-Commerce Web"
-   dotnet user-secrets set "StripeSettings:SecretKey" "sk_test_xxxxxxxx" --project "E-Commerce Web"
-   ```
+Start the API from the web project folder, because the seed files are read with a relative path:
 
-   To receive payment events locally, install the [Stripe CLI](https://docs.stripe.com/stripe-cli), forward the events to the API, and store the signing secret it prints (`whsec_...`):
+```bash
+cd "E-Commerce Web"
+dotnet run --launch-profile https
+```
 
-   ```bash
-   stripe listen --forward-to https://localhost:5001/api/payments/webhook --skip-verify
-   dotnet user-secrets set "StripeSettings:WhSecret" "whsec_xxxxxxxx" --project "E-Commerce Web"
-   ```
+On startup the app applies the EF Core migrations to both databases (they are created automatically) and seeds the data: 6 brands, 4 types, 18 products, 4 delivery methods, the `Admin` and `SuperAdmin` roles, and two demo users (development use only):
 
-3. Start the API from the web project folder (the seed files are read with a relative path):
+| Email | Password | Role |
+|---|---|---|
+| `anas@gmail.com` | `P@ssw0rd01` | Admin |
+| `adel@gmail.com` | `P@ssw0rd02` | SuperAdmin |
 
-   ```bash
-   cd "E-Commerce Web"
-   dotnet run --launch-profile https
-   ```
+Open Swagger at `https://localhost:5001/swagger`. Protected endpoints need a bearer token: call `POST /api/Authentication/Login`, then send the returned token in the `Authorization: Bearer <token>` header.
 
-4. On startup the app applies the EF Core migrations to both databases and seeds the data: 6 brands, 4 types, 18 products, 4 delivery methods, the `Admin` and `SuperAdmin` roles, and two demo users (see `DataSeeding.cs`; development use only).
+### 4. Start the Stripe webhook listener
 
-5. Open Swagger at `https://localhost:5001/swagger`.
+Open a second terminal. The webhook updates the order status after payment; without it, orders stay `Pending`.
 
-> Protected endpoints need a bearer token: call `POST /api/Authentication/Login`, then send the returned token in the `Authorization: Bearer <token>` header (Postman, curl, or the Angular client).
+```bash
+stripe login
+stripe listen --events payment_intent.succeeded,payment_intent.payment_failed --forward-to https://localhost:5001/api/payments/webhook --skip-verify
+```
 
-### Run the Angular client
+Copy the `whsec_...` value it prints, store it, and restart the API:
+
+```bash
+dotnet user-secrets set "StripeSettings:WebhookSecret" "whsec_xxxxxxxx" --project "E-Commerce Web"
+```
+
+Keep `stripe listen` running while you test. The `whsec_...` stays the same each time you run `stripe listen` while logged in with the same account.
+
+### 5. Run the Angular client
 
 ```bash
 cd client
@@ -381,9 +465,45 @@ npm install
 npm start
 ```
 
-Open `http://localhost:4200`. The client expects the API at `https://localhost:5001/api/` (`client/src/environments/environment.ts`). To try the card payment, put your own Stripe **publishable** key in `client/src/app/checkout/checkout-payment/checkout-payment.component.ts`.
+Open `http://localhost:4200`. The API allows CORS from `http://localhost:4200` and `https://localhost:4200`.
 
-> The Angular storefront is a ready-made client that is connected to this API. The focus of this repository is the backend.
+## Try the full flow
+
+1. Open `http://localhost:4200/shop`, search, sort, and filter by brand or type.
+2. Add a few dishes to the basket. Guests can have a basket without logging in.
+3. Log in with a demo user (or register), then go to **Checkout**.
+4. Fill in the address, pick a delivery method, review the order, and pay with a Stripe test card:
+
+   | Card number | Result |
+   |---|---|
+   | `4242 4242 4242 4242` | Payment succeeds |
+   | `4000 0000 0000 0002` | Card is declined |
+
+   Use any future expiry date, any 3-digit CVC, and any postal code.
+5. Open **View Orders** from the user menu. The new order shows `Pending` for a moment, then **Paid** once the webhook arrives. A declined card shows **Payment failed**.
+
+## Troubleshooting
+
+| Symptom | Likely cause and fix |
+|---|---|
+| `Cannot connect to SQL Server` or login failed | Change the connection strings in `appsettings.json` to your instance and authentication type |
+| `It was not possible to connect to the redis server` | Redis is not running on `localhost:6379`. Start it, for example with the Docker command above |
+| Login returns `500` | Read the exception text in the API console. A missing or very short `JWTOptions:SecretKey` is the usual cause; set a secret of at least 32 characters |
+| Product images do not load | `URLs:baseUrl` does not match the address the API runs on |
+| Browser shows a CORS or certificate error | Run `dotnet dev-certs https --trust`, then restart the API and the browser. Keep the client on port `4200` |
+| `FileNotFoundException` for `brands.json` on startup | Run the API from inside the `E-Commerce Web` folder |
+| The Stripe card form fails or shows an error | The publishable key in `checkout-payment.component.ts` is missing, or belongs to a different Stripe account than the secret key |
+| Payment succeeds but the order stays `Pending` | `stripe listen` is not running, or `StripeSettings:WebhookSecret` is missing or outdated. Restart the API after setting it |
+| `stripe` is not recognized on Windows | Open a new terminal after installing the Stripe CLI (it needs a refreshed `PATH`) |
+| `npm start` fails with `ERR_OSSL_EVP_UNSUPPORTED` | Use Node 14, or set `NODE_OPTIONS=--openssl-legacy-provider` |
+| `dotnet build` does not recognize the `.slnx` file | Use the .NET 9 SDK, or build `E-Commerce Web/E-Commerce Web.csproj` directly |
+
+## Security notes
+
+- Never commit `sk_test_...`, `whsec_...`, or the JWT secret. They belong in User Secrets or environment variables. If you pushed one by mistake, rotate it in the Stripe Dashboard.
+- The demo users and the sample JWT placeholder in `appsettings.json` are for local development only.
+- The Stripe publishable key is public by design, but each person who clones the repository should use the key of their own Stripe account.
+- Product prices and the payment amount are always computed on the server from the database.
 
 ## Author
 
