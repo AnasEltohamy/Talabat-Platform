@@ -1,36 +1,53 @@
-<div class="container mt-2">
-    <div *ngIf="(basket$ | async) === null">
-        <p>There are no items in your basket</p>
-    </div>
+<div class="container basket-page">
 
-    <div *ngIf="basket$ | async">
-        <div class="pb-5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 py-5 mb-1">
-                        <app-basket-summary
-                            (decrement)="decrementItemQuantity($event)"
-                            (increment)="incrementItemQuantity($event)"
-                            (remove)="removeBasketItem($event)"
-                            [items]="(basket$ | async).items"
-                        ></app-basket-summary>
+    <ng-container *ngIf="(basket$ | async) as basket; else emptyBasket">
+        <div class="row" *ngIf="basket.items.length > 0; else emptyBasket">
+
+            <!-- المنتجات -->
+            <div class="col-lg-8 mb-4">
+                <div class="panel">
+                    <div class="panel-head">
+                        <h5 class="mb-0">Your items <span class="count">{{basket.items.length}}</span></h5>
                     </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-6 offset-6">
-                        <app-order-totals
-                            *ngIf="(basketTotals$ | async)"
-                            [shippingPrice]="(basketTotals$ | async).shipping"
-                            [subtotal]="(basketTotals$ | async).subtotal"
-                            [total]="(basketTotals$ | async).total"
-                        ></app-order-totals>
-                        <a routerLink="/checkout" class="btn btn-outline-primary py-2 btn-block">
-                            Proceed to checkout
-                        </a>
-                    </div>
+                    <app-basket-summary
+                        (decrement)="decrementItemQuantity($event)"
+                        (increment)="incrementItemQuantity($event)"
+                        (remove)="removeBasketItem($event)"
+                        [items]="basket.items">
+                    </app-basket-summary>
                 </div>
             </div>
+
+            <!-- الملخص -->
+            <div class="col-lg-4 mb-4">
+                <div class="summary-col">
+                    <app-order-totals
+                        *ngIf="(basketTotals$ | async) as totals"
+                        [shippingPrice]="totals.shipping"
+                        [subtotal]="totals.subtotal"
+                        [total]="totals.total">
+                    </app-order-totals>
+
+                    <a routerLink="/checkout" class="btn btn-primary btn-block btn-checkout">
+                        Proceed to checkout<i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                    <a routerLink="/shop" class="continue-link">
+                        <i class="fa fa-arrow-left mr-2"></i>Continue shopping
+                    </a>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </ng-container>
+
+    <!-- السلة فاضية -->
+    <ng-template #emptyBasket>
+        <div class="empty">
+            <i class="fa fa-shopping-basket"></i>
+            <h4>Your basket is empty</h4>
+            <p>Looks like you haven't added anything yet.</p>
+            <a routerLink="/shop" class="btn btn-primary">Browse the shop</a>
+        </div>
+    </ng-template>
+
 </div>

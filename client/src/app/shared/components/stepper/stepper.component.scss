@@ -1,21 +1,167 @@
-button.nav-link {
-    background: #e9ecef;
-    border-radius: 0;
+$orange: #e95420;
+$dark: #343a40;
+$muted: #6c757d;
+
+:host {
+    display: block;
+}
+
+.stepper {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- شريط المراحل ---------- */
+.steps {
+    display: flex;
+    margin: 0;
+    padding: 26px 16px 22px;
+    list-style: none;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.step {
+    position: relative;
+    flex: 1;
+    text-align: center;
+
+    // الخط الواصل بين الدوائر
+    &:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 19px;
+        left: calc(50% + 28px);
+        right: calc(-50% + 28px);
+        height: 2px;
+        background: #e2e5e8;
+        transition: background 0.3s;
+    }
+
+    &.done:not(:last-child)::after {
+        background: $orange;
+    }
+}
+
+.step-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    background: none;
     border: none;
+    cursor: default;
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
 
     &:focus {
         outline: none;
     }
-    &.active:hover {
-        color: white;
+}
+
+.step-circle {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    font-weight: 700;
+    color: $muted;
+    background: #fff;
+    border: 2px solid #d5d9dd;
+    border-radius: 50%;
+    transition: all 0.25s;
+}
+
+.step-label {
+    margin-top: 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $muted;
+}
+
+.step.active {
+    .step-circle {
+        color: #fff;
+        background: $orange;
+        border-color: $orange;
+        box-shadow: 0 0 0 5px rgba($orange, 0.16);
     }
-    & :active {
-        outline: none;
+
+    .step-label {
+        color: $orange;
     }
-    &.active:focus {
-        outline: none;
+}
+
+.step.done {
+    .step-circle {
+        color: #fff;
+        background: $orange;
+        border-color: $orange;
     }
-    &:disabled:not(.active) {
-        color: #333;
+
+    .step-label {
+        color: $dark;
+    }
+}
+
+/* ---------- المحتوى ---------- */
+.step-content {
+    padding: 28px 32px 32px;
+}
+
+/* ستايلات مشتركة لكل مراحل الـ Checkout */
+:host ::ng-deep {
+    .step-title {
+        margin-bottom: 4px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: $dark;
+    }
+
+    .step-subtitle {
+        margin-bottom: 24px;
+        color: $muted;
+    }
+
+    .step-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid #f0f0f0;
+
+        .btn {
+            height: 46px;
+            padding: 0 24px;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+    }
+}
+
+@media (max-width: 575px) {
+    .step-content {
+        padding: 20px 16px 24px;
+    }
+
+    .step-label {
+        font-size: 0.68rem;
+    }
+
+    .step-actions .btn {
+        width: 100%;
     }
 }

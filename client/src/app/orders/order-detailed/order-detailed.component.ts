@@ -12,20 +12,16 @@ import { OrdersService } from '../orders.service';
 export class OrderDetailedComponent implements OnInit {
   order: IOrder;
 
-  constructor(private route: ActivatedRoute, private breadcrumbService: BreadcrumbService, 
+  constructor(private route: ActivatedRoute, private breadcrumbService: BreadcrumbService,
     private orderService: OrdersService) {
-      this.breadcrumbService.set('@OrderDetailed', ' ');
-     }
+    this.breadcrumbService.set('@OrderDetailed', ' ');
+  }
 
   ngOnInit(): void {
-    debugger
-    console.log(this.route.snapshot.paramMap.get('id'))
-    console.log(typeof(this.route.snapshot.paramMap.get('id'))) // Returns Number as type 
     this.orderService.getOrderDetailed(this.route.snapshot.paramMap.get('id'))
       .subscribe((order: IOrder) => {
         this.order = order;
-        console.log(order)
-        this.breadcrumbService.set('@OrderDetailed', `Order# ${order.id} - ${order.status}`);
+        this.breadcrumbService.set('@OrderDetailed', `Order #${order.id.substring(0, 8).toUpperCase()}`);
       }, error => {
         console.log(error);
       })

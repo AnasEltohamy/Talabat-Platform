@@ -1,34 +1,38 @@
-<div class="mt-4" [formGroup]="checkoutForm">
-    <div class="d-flex justify-content-between align-items-center">
-        <h4>Shipping address</h4>
-        <button (click)="saveUserAddress()" class="btn btn-outline-success mb-3" [disabled]="!checkoutForm.get('addressForm').valid || !checkoutForm.get('addressForm').dirty">
-            Save as default address
-        </button>
-    </div>
+<div [formGroup]="checkoutForm">
+    <h4 class="step-title">Shipping address</h4>
+    <p class="step-subtitle">Where should we deliver your order?</p>
+
     <div class="row" formGroupName="addressForm">
-        <div class="form-group col-6">
+        <div class="col-md-6">
             <app-text-input [label]="'First name'" formControlName="firstName"></app-text-input>
         </div>
-        <div class="form-group col-6">
+        <div class="col-md-6">
             <app-text-input [label]="'Last name'" formControlName="lastName"></app-text-input>
         </div>
-        <div class="form-group col-6">
+        <div class="col-12">
             <app-text-input [label]="'Street'" formControlName="street"></app-text-input>
         </div>
-        <div class="form-group col-6">
+        <div class="col-md-6">
             <app-text-input [label]="'City'" formControlName="city"></app-text-input>
         </div>
-        <div class="form-group col-6">
+        <div class="col-md-6">
             <app-text-input [label]="'Country'" formControlName="country"></app-text-input>
         </div>
     </div>
+
+    <div class="text-right">
+        <button type="button" (click)="saveUserAddress()" class="btn btn-sm btn-outline-secondary"
+            [disabled]="!checkoutForm.get('addressForm').valid || !checkoutForm.get('addressForm').dirty">
+            <i class="fa fa-bookmark-o mr-1"></i> Save as default address
+        </button>
+    </div>
 </div>
 
-<div class="float-none d-flex justify-content-between flex-column flex-lg-row mb-5">
-    <button class="btn btn-outline-primary" routerLink="/basket">
-        <i class="fa fa-angle-left"></i> Back to basket
+<div class="step-actions">
+    <button type="button" class="btn btn-outline-primary" routerLink="/basket">
+        <i class="fa fa-angle-left mr-2"></i>Back to basket
     </button>
-    <button [disabled]="checkoutForm.get('addressForm').invalid" class="btn btn-primary" cdkStepperNext>
-        Go to delivery <i class="fa fa-angle-right"></i>
+    <button type="button" [disabled]="checkoutForm.get('addressForm').invalid" class="btn btn-primary" cdkStepperNext>
+        Go to delivery<i class="fa fa-angle-right ml-2"></i>
     </button>
 </div>

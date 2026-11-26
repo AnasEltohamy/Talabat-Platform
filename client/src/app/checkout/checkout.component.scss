@@ -1,0 +1,24 @@
+$orange: #e95420;
+$muted: #6c757d;
+
+.checkout-page {
+    padding-top: 32px;
+    padding-bottom: 56px;
+}
+
+.summary-col {
+    position: sticky;
+    top: 24px;
+}
+
+.edit-link {
+    display: block;
+    text-align: center;
+    font-size: 0.92rem;
+    color: $muted;
+    text-decoration: none;
+
+    &:hover {
+        color: $orange;
+    }
+}

@@ -1,7 +1,56 @@
-<div class="container mt-5">
-    <div><i class="fa fa-check-circle fa-5x" style="color: green;"></i></div>
-    <h2>Thank you.  Your order is confirmed</h2>
-    <p class="mb-4">Your order has not shipped yet, but this is to be expected as we are not a real store</p>
-    <button *ngIf="order" routerLink="/orders/{{order?.id}}" class="btn btn-outline-success">View your order</button>
-    <button *ngIf="!order" routerLink="/orders" class="btn btn-outline-success">View your orders</button>
+<div class="container success-page">
+    <div class="success-card">
+
+        <div class="check-wrap">
+            <i class="fa fa-check"></i>
+        </div>
+
+        <h2 class="title">Thank you! Your order is confirmed</h2>
+        <p class="subtitle">Your payment was successful and we're getting your order ready.</p>
+
+        <!-- تفاصيل الطلب (بتظهر لو الصفحة اتفتحت بعد الدفع مباشرة) -->
+        <div class="details" *ngIf="order">
+            <div class="detail">
+                <span class="label">Order number</span>
+                <span class="value mono">{{order.id}}</span>
+            </div>
+            <div class="detail">
+                <span class="label">Date</span>
+                <span class="value">{{order.orderDate | date:'medium'}}</span>
+            </div>
+            <div class="detail">
+                <span class="label">Delivery</span>
+                <span class="value">{{order.deliveryMethod}}</span>
+            </div>
+            <div class="detail" *ngIf="order.shipToAddress">
+                <span class="label">Ship to</span>
+                <span class="value">
+                    {{order.shipToAddress.firstName}} {{order.shipToAddress.lastName}}<br>
+                    {{order.shipToAddress.street}}, {{order.shipToAddress.city}}, {{order.shipToAddress.country}}
+                </span>
+            </div>
+            <div class="detail total">
+                <span class="label">Total paid</span>
+                <strong class="value">{{order.total | currency}}</strong>
+            </div>
+        </div>
+
+        <p class="demo-note">
+            <i class="fa fa-info-circle mr-1"></i>
+            Your order has not shipped yet, but this is to be expected as we are not a real store.
+        </p>
+
+        <div class="actions">
+            <a *ngIf="order" routerLink="/orders/{{order.id}}" class="btn btn-primary">
+                <i class="fa fa-file-text-o mr-2"></i>View your order
+            </a>
+            <a *ngIf="!order" routerLink="/orders" class="btn btn-primary">
+                <i class="fa fa-file-text-o mr-2"></i>View your orders
+            </a>
+            <a routerLink="/shop" class="btn btn-outline-primary">
+                <i class="fa fa-shopping-bag mr-2"></i>Continue shopping
+            </a>
+        </div>
+
+    </div>
 </div>

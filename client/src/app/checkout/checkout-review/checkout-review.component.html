@@ -1,15 +1,18 @@
-<div class="mt-4">
-    <app-basket-summary 
-        [isBasket]=false
-        [items]="(basket$ | async).items"
-        ></app-basket-summary>
+<h4 class="step-title">Review your order</h4>
+<p class="step-subtitle">Make sure everything looks right before you pay.</p>
+
+<div class="review-box">
+    <app-basket-summary
+        [isBasket]="false"
+        [items]="(basket$ | async).items">
+    </app-basket-summary>
 </div>
 
-<div class="float-none d-flex justify-content-between flex-column flex-lg-row mb-5">
-    <button class="btn btn-outline-primary" cdkStepperPrevious>
-        <i class="fa fa-angle-left"></i> Back to Delivery
+<div class="step-actions">
+    <button type="button" class="btn btn-outline-primary" cdkStepperPrevious>
+        <i class="fa fa-angle-left mr-2"></i>Back to delivery
     </button>
-    <button class="btn btn-primary" (click)="createPaymentIntent()">
-        Go to Payment <i class="fa fa-angle-right"></i>
+    <button type="button" class="btn btn-primary" (click)="createPaymentIntent()">
+        Go to payment<i class="fa fa-angle-right ml-2"></i>
     </button>
 </div>

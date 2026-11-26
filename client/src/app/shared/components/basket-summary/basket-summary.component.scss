@@ -1,0 +1,139 @@
+$orange: #e95420;
+$dark: #343a40;
+$muted: #6c757d;
+
+.basket-table {
+    margin-bottom: 0;
+
+    thead th {
+        padding: 14px 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: $muted;
+        background: #fafafa;
+        border-top: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    tbody td {
+        padding: 16px 20px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    tbody tr:first-child td {
+        border-top: none;
+    }
+
+    tbody tr:hover {
+        background: #fffaf7;
+    }
+}
+
+/* ---------- المنتج ---------- */
+.product-cell {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 220px;
+}
+
+.thumb {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #f1f1f1;
+}
+
+.product-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-weight: 600;
+    color: $dark;
+    text-decoration: none;
+
+    &:hover {
+        color: $orange;
+    }
+}
+
+.product-type {
+    margin-top: 2px;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: $muted;
+}
+
+/* ---------- الكمية ---------- */
+.qty {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    height: 40px;
+    overflow: hidden;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+}
+
+.qty-btn {
+    width: 36px;
+    height: 100%;
+    font-size: 0.8rem;
+    color: $dark;
+    background: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover {
+        color: #fff;
+        background: $orange;
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.qty-value {
+    min-width: 40px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.qty-plain {
+    font-weight: 600;
+}
+
+.line-total {
+    font-weight: 700;
+    color: $dark;
+}
+
+/* ---------- الحذف ---------- */
+.remove-btn {
+    width: 38px;
+    height: 38px;
+    color: #dc3545;
+    background: rgba(#dc3545, 0.08);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover {
+        color: #fff;
+        background: #dc3545;
+    }
+
+    &:focus {
+        outline: none;
+    }
+}

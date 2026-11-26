@@ -1,37 +1,47 @@
-<div class="mt-4" [formGroup]="checkoutForm">
+<div [formGroup]="checkoutForm">
+    <h4 class="step-title">Payment</h4>
+    <p class="step-subtitle">Enter your card details to complete the order.</p>
+
     <div class="row">
-        <div class="form-group col-12" formGroupName="paymentForm">
+        <div class="col-12" formGroupName="paymentForm">
             <app-text-input [label]="'Name on card'" formControlName="nameOnCard"></app-text-input>
         </div>
-        <div class="form-group col-6">
-            <div #cardNumber class="form-control py-3"></div>
-            <ng-container *ngIf="cardErrors">
-                <span class="text-danger">{{cardErrors}}</span>
-            </ng-container>
+
+        <div class="col-12 mb-3">
+            <label class="field-label">Card number</label>
+            <div #cardNumber class="form-control stripe-field"></div>
+            <span class="text-danger small" *ngIf="cardErrors">{{cardErrors}}</span>
         </div>
-        <div class="form-group col-3">
-            <div #cardExpiry class="form-control py-3"></div>
+
+        <div class="col-6 mb-3">
+            <label class="field-label">Expiry date</label>
+            <div #cardExpiry class="form-control stripe-field"></div>
         </div>
-        <div class="form-group col-3">
-            <div #cardCvc class="form-control py-3"></div>
+
+        <div class="col-6 mb-3">
+            <label class="field-label">CVC</label>
+            <div #cardCvc class="form-control stripe-field"></div>
         </div>
+    </div>
+
+    <div class="secure-note">
+        <i class="fa fa-lock"></i> Payments are processed securely by Stripe.
     </div>
 </div>
 
-
-<div class="float-none d-flex justify-content-between flex-column flex-lg-row mb-5">
-    <button class="btn btn-outline-primary" cdkStepperPrevious>
-        <i class="fa fa-angle-left"></i> Back to Review
+<div class="step-actions">
+    <button type="button" class="btn btn-outline-primary" cdkStepperPrevious>
+        <i class="fa fa-angle-left mr-2"></i>Back to review
     </button>
-    <button 
-        [disabled]="loading 
-            || checkoutForm.get('paymentForm').invalid 
-            || !cardNumberValid 
-            || !cardExpiryValid 
-            || !cardCvcValid" 
-        class="btn btn-primary" 
+    <button type="button"
+        [disabled]="loading
+            || checkoutForm.get('paymentForm').invalid
+            || !cardNumberValid
+            || !cardExpiryValid
+            || !cardCvcValid"
+        class="btn btn-primary"
         (click)="submitOrder()">
-        Submit order <i class="fa fa-angle-right"></i>
-        <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+        <i class="fa fa-lock mr-2"></i>Submit order
+        <i *ngIf="loading" class="fa fa-spinner fa-spin ml-2"></i>
     </button>
 </div>

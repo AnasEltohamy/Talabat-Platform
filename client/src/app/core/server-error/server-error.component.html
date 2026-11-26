@@ -1,18 +1,26 @@
-<div class="container mt-5">
-    <h4>Internal server error - refreshing the page will make the exception disapper</h4>
-    <ng-container *ngIf="error">
-        <h5 class="text-danger">Error: {{error.message}}</h5>
-        <p class="font-weight-bold">Note: if you are seeing this then Angular is probably not responsible</p>
-        <p>What to do next?</p>
-        <ol>
-            <li>Open chrome dev tools</li>
-            <li>Inspect the network tab</li>
-            <li>Check the failing request</li>
-            <li>Examine this request URL - make sure this is correct</li>
-            <li>Reproduce the error in postman - if we get the same response in postman, then the issue is NOT with
-                angular</li>
-        </ol>
-        <p>Following is the stack trace - this is where your investigation should start!</p>
-        <code class="mt-5" style="background-color: whitesmoke;">{{error.details}}</code>
-    </ng-container>
+<div class="container error-page">
+    <div class="error-card">
+        <div class="error-icon"><i class="fa fa-exclamation-triangle"></i></div>
+        <h2 class="error-title">Something went wrong</h2>
+        <p class="error-text">We hit an unexpected problem on our side. Please try again in a moment.</p>
+
+        <div class="error-actions">
+            <button type="button" class="btn btn-primary" (click)="reload()">
+                <i class="fa fa-refresh mr-2"></i>Try again
+            </button>
+            <a routerLink="/" class="btn btn-outline-primary">
+                <i class="fa fa-home mr-2"></i>Back to home
+            </a>
+        </div>
+
+        <!-- تفاصيل للمطور -->
+        <details class="dev-details" *ngIf="error">
+            <summary>Technical details</summary>
+            <p class="dev-message">{{error.message}}</p>
+            <code *ngIf="error.details">{{error.details}}</code>
+            <p class="dev-hint">
+                Tip: open the browser dev tools ← Network, check the failing request, and reproduce it in Postman.
+            </p>
+        </details>
+    </div>
 </div>

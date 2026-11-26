@@ -1,11 +1,27 @@
-<div class="container mt-5">
-    <button (click)="get500Error()" class="btn btn-outline-primary mr-3">Test 500 error</button>
-    <button (click)="get404Error()" class="btn btn-outline-primary mr-3">Test 404 error</button>
-    <button (click)="get400Error()" class="btn btn-outline-primary mr-3">Test 400 error</button>
-    <button (click)="get400ValidationError()" class="btn btn-outline-primary mr-3">Test 400 validation error</button>
-    <div class="row mt-5" *ngIf="validationErrors">
-        <ul class="text-danger">
-            <li *ngFor="let error of validationErrors">{{error}}</li>
+<div class="container test-page">
+    <div class="test-card">
+        <h4 class="test-title">Error testing</h4>
+        <p class="test-text">Trigger each error type to check how the app handles it.</p>
+
+        <div class="test-grid">
+            <button type="button" (click)="get500Error()" class="btn btn-outline-primary">
+                <span class="code">500</span>Server error
+            </button>
+            <button type="button" (click)="get404Error()" class="btn btn-outline-primary">
+                <span class="code">404</span>Not found
+            </button>
+            <button type="button" (click)="get400Error()" class="btn btn-outline-primary">
+                <span class="code">400</span>Bad request
+            </button>
+            <button type="button" (click)="get400ValidationError()" class="btn btn-outline-primary">
+                <span class="code">400</span>Validation error
+            </button>
+        </div>
+
+        <ul class="test-errors" *ngIf="validationErrors">
+            <li *ngFor="let error of validationErrors">
+                <i class="fa fa-exclamation-circle mr-2"></i>{{error}}
+            </li>
         </ul>
     </div>
 </div>

@@ -1,14 +1,16 @@
-<ng-container *ngIf="(breadcrumb$ | async) as breadcrumbs" >
-    <section *ngIf="breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length-1].label !== 'Home'" class="py-5" style="margin-top: 105px; background-color: #f5f5f5;">
-        <div class="container">
-            <div class="row d-flex align-items-center">
-                <div class="col-9">
-                    <h1>{{breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length-1].label | titlecase}}</h1>
-                </div>
-                <div class="col-3">
-                    <xng-breadcrumb></xng-breadcrumb>
-                </div>
-            </div>
+<ng-container *ngIf="(breadcrumb$ | async) as breadcrumbs">
+    <section *ngIf="breadcrumbs.length > 0
+                    && breadcrumbs[breadcrumbs.length-1].label !== 'Home'
+                    && breadcrumbs[breadcrumbs.length-1].label !== 'Shop'
+                    && (breadcrumbs[breadcrumbs.length-1].label | lowercase) !== 'login'
+                    && (breadcrumbs[breadcrumbs.length-1].label | lowercase) !== 'register'
+                    && (breadcrumbs[breadcrumbs.length-1].label | lowercase) !== 'not found'
+                    && (breadcrumbs[breadcrumbs.length-1].label | lowercase) !== 'server error'
+                    && !(breadcrumbs.length > 2 && breadcrumbs[1].label === 'Checkout')"
+             class="page-banner">
+        <div class="container banner-inner">
+            <h2 class="banner-title">{{breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length-1].label | titlecase}}</h2>
+            <xng-breadcrumb class="banner-crumbs"></xng-breadcrumb>
         </div>
     </section>
 </ng-container>

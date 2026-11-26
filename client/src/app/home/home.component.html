@@ -1,16 +1,106 @@
-<carousel>
-    <slide>
-        <img src="assets/images/hero1.jpg" alt="first slide" style="display: block; width: 100%;">
-    </slide>
-    <slide>
-        <img src="assets/images/hero2.jpg" alt="second slide" style="display: block; width: 100%;">
-    </slide>
-    <slide>
-        <img src="assets/images/hero3.jpg" alt="third slide" style="display: block; width: 100%;">
-    </slide>
-</carousel>
-<section class="featured">
-    <div class="d-flex justify-content-center pt-4">
-        <h1>Welcome to the shop!</h1>
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <span class="hero-badge">Full-stack e-commerce project</span>
+                <h1 class="hero-title">Welcome to <span class="accent">Talabat</span></h1>
+                <p class="hero-text">
+                    A complete online store built end to end: a clean ASP.NET Core API,
+                    an Angular storefront, Redis-backed baskets and secure Stripe payments.
+                </p>
+                <div class="hero-actions">
+                    <a routerLink="/shop" class="btn btn-primary btn-lg mr-2 mb-2">
+                        <i class="fa fa-shopping-bag mr-2"></i>Browse the shop
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary btn-lg mb-2" (click)="scrollTo('about')">
+                        About the project
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image-wrap">
+                    <img src="assets/images/hero1.jpg" alt="Talabat store" class="hero-image">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About -->
+<section id="about" class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="section-title">About the project</h2>
+                <p class="section-text">
+                    Talabat is a learning-to-production e-commerce platform. The back-end follows the
+                    Onion Architecture with the Repository, Unit of Work and Specification patterns,
+                    which keeps the business logic independent from the database and the web layer.
+                    The Angular client talks to the API through a clear contract and handles
+                    authentication, basket, checkout and orders.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title text-center">What you can do</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4" *ngFor="let f of features">
+                <div class="feature-card h-100">
+                    <div class="feature-icon"><i class="fa {{f.icon}}"></i></div>
+                    <h5>{{f.title}}</h5>
+                    <p class="mb-0">{{f.text}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How it works -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title text-center">How it works</h2>
+        <div class="row steps">
+            <div class="col-6 col-md step" *ngFor="let s of steps; let i = index">
+                <div class="step-number">{{i + 1}}</div>
+                <h6>{{s.title}}</h6>
+                <p>{{s.text}}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tech stack -->
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title text-center">Technologies we used</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4" *ngFor="let group of stack">
+                <div class="stack-card h-100">
+                    <h5><i class="fa {{group.icon}} mr-2 accent"></i>{{group.title}}</h5>
+                    <div class="chips">
+                        <span class="chip" *ngFor="let item of group.items">{{item}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to action -->
+<section class="cta">
+    <div class="container text-center">
+        <h2>Ready to explore?</h2>
+        <p>Pick your favorites and try the full checkout with Stripe test cards.</p>
+        <a routerLink="/shop" class="btn btn-light btn-lg mr-2 mb-2">Start shopping</a>
+        <a href="https://github.com/AnasEltohamy/Talabat-Platform" target="_blank" rel="noopener"
+           class="btn btn-outline-light btn-lg mb-2">
+            <i class="fa fa-github mr-2"></i>View on GitHub
+        </a>
     </div>
 </section>

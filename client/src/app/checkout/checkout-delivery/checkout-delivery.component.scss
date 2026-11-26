@@ -1,0 +1,110 @@
+$orange: #e95420;
+$dark: #343a40;
+$muted: #6c757d;
+
+.methods {
+    display: grid;
+    gap: 14px;
+}
+
+.method {
+    position: relative;
+
+    // الـ radio الأصلي مخفي، والكارت هو اللي بيتضغط
+    input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.method-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0;
+    padding: 18px 20px;
+    cursor: pointer;
+    background: #fff;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        border-color: rgba($orange, 0.5);
+    }
+}
+
+.method-radio {
+    position: relative;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #ced4da;
+    border-radius: 50%;
+    transition: border-color 0.2s;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 12px;
+        height: 12px;
+        background: $orange;
+        border-radius: 50%;
+        transform: scale(0);
+        transition: transform 0.2s;
+    }
+}
+
+.method-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.method-name {
+    font-size: 1.05rem;
+    color: $dark;
+}
+
+.method-desc {
+    font-size: 0.9rem;
+    color: $muted;
+}
+
+.method-time {
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: $orange;
+}
+
+.method-price {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: $dark;
+}
+
+/* الحالة المختارة */
+.method input:checked + .method-card {
+    background: rgba($orange, 0.05);
+    border-color: $orange;
+    box-shadow: 0 4px 14px rgba($orange, 0.15);
+
+    .method-radio {
+        border-color: $orange;
+
+        &::after {
+            transform: scale(1);
+        }
+    }
+
+    .method-price {
+        color: $orange;
+    }
+}
+
+.method input:focus + .method-card {
+    box-shadow: 0 0 0 3px rgba($orange, 0.25);
+}

@@ -1,0 +1,74 @@
+$orange: #e95420;
+$dark: #343a40;
+$muted: #6c757d;
+
+:host {
+    display: block;
+    margin-bottom: 16px;
+}
+
+.totals-card {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.totals-head {
+    padding: 16px 24px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $orange;
+    background: rgba($orange, 0.08);
+    border-bottom: 1px solid rgba($orange, 0.15);
+}
+
+.totals-body {
+    padding: 20px 24px 8px;
+}
+
+.note {
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: $muted;
+}
+
+.totals-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+
+        span {
+            color: $muted;
+        }
+
+        strong {
+            color: $dark;
+        }
+
+        &.grand {
+            border-bottom: none;
+            padding-top: 16px;
+
+            span {
+                font-weight: 700;
+                color: $dark;
+            }
+
+            strong {
+                font-size: 1.35rem;
+                color: $orange;
+            }
+        }
+    }
+}

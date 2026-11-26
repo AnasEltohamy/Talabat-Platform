@@ -1,12 +1,13 @@
-<div class="container mt-5">
+<div class="container checkout-page">
     <div class="row">
-        <div class="col-8">
+
+        <div class="col-lg-8 mb-4">
             <app-stepper [linearModeSelected]="true" #appStepper>
                 <cdk-step [label]="'Address'" [completed]="(checkoutForm.get('addressForm')).valid">
                     <app-checkout-address [checkoutForm]="checkoutForm"></app-checkout-address>
                 </cdk-step>
                 <cdk-step [label]="'Delivery'" [completed]="(checkoutForm.get('deliveryForm')).valid">
-                   <app-checkout-delivery [checkoutForm]="checkoutForm"></app-checkout-delivery>
+                    <app-checkout-delivery [checkoutForm]="checkoutForm"></app-checkout-delivery>
                 </cdk-step>
                 <cdk-step [label]="'Review'">
                     <app-checkout-review [appStepper]="appStepper"></app-checkout-review>
@@ -16,13 +17,21 @@
                 </cdk-step>
             </app-stepper>
         </div>
-        <div class="col-4">
-            <app-order-totals
-                *ngIf="(basketTotals$ | async)"
-                [shippingPrice]="(basketTotals$ | async).shipping"
-                [subtotal]="(basketTotals$ | async).subtotal"
-                [total]="(basketTotals$ | async).total"
-            ></app-order-totals>
+
+        <div class="col-lg-4 mb-4">
+            <div class="summary-col">
+                <app-order-totals
+                    *ngIf="(basketTotals$ | async) as totals"
+                    [shippingPrice]="totals.shipping"
+                    [subtotal]="totals.subtotal"
+                    [total]="totals.total">
+                </app-order-totals>
+
+                <a routerLink="/basket" class="edit-link">
+                    <i class="fa fa-pencil mr-2"></i>Edit basket
+                </a>
+            </div>
         </div>
+
     </div>
 </div>

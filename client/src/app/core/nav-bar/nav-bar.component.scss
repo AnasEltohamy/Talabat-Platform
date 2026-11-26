@@ -1,31 +1,127 @@
-.cart-no {
-    position: absolute;
-    min-height: 25px;
-    min-width: 25px;
-    border-radius: 50%;
-    font-size: 1em;
-    background: blue;
-    color: white;
-    text-align: center;
-    top: -12px;
-    right: 32px;
+$orange: #e95420;
+$dark: #343a40;
+
+.site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
 }
 
-a {
-    text-decoration: none;
-    color: #343a40;
-    &.active {
-        color: orange
-    }
+.nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    min-height: 72px;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 .logo {
+    display: block;
+    height: 48px;
+    width: auto;
     cursor: pointer;
-    &:focus {
-        outline: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 8px;
+
+    a {
+        padding: 8px 16px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: $dark;
+        border-radius: 8px;
+        transition: color 0.2s, background 0.2s;
+
+        &:hover {
+            color: $orange;
+            background: rgba($orange, 0.08);
+        }
+
+        &.active {
+            color: $orange;
+        }
     }
 }
 
-.text-orange {
-    color: #e95420;
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cart-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    font-size: 1.35rem;
+    color: $orange;
+    text-decoration: none;
+    border-radius: 50%;
+    transition: background 0.2s;
+
+    &:hover {
+        color: $orange;
+        background: rgba($orange, 0.08);
+    }
+}
+
+.cart-no {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+    color: #fff;
+    background: $dark;
+    border-radius: 10px;
+}
+
+.user-toggle {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    color: $dark;
+    text-decoration: none;
+    cursor: pointer;
+
+    i {
+        margin-right: 8px;
+        font-size: 1.5rem;
+        color: $orange;
+    }
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    cursor: pointer;
+
+    i {
+        width: 22px;
+        margin-right: 8px;
+        color: $orange;
+    }
+}
+
+@media (max-width: 767px) {
+    .nav-inner {
+        justify-content: center;
+    }
 }

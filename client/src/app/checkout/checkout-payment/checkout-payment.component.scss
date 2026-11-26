@@ -1,0 +1,26 @@
+$muted: #6c757d;
+
+.field-label {
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $muted;
+}
+
+.stripe-field {
+    padding: 0.9rem 0.75rem;
+    border-radius: 8px;
+}
+
+.secure-note {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: $muted;
+
+    i {
+        margin-right: 6px;
+        color: #28a745;
+    }
+}

@@ -1,12 +1,63 @@
-<div class="container mt-5">
-    <div class="row" *ngIf="order">
-        <div class="col-8">
-            <app-basket-summary [items]="order.items" [isBasket]="false" [isOrder]="true"></app-basket-summary>
+<div class="container order-page" *ngIf="order">
+
+    <!-- رأس الطلب -->
+    <div class="order-head">
+        <div>
+            <span class="eyebrow">Order</span>
+            <h3 class="order-id">#{{order.id}}</h3>
+            <span class="order-date"><i class="fa fa-calendar-o mr-1"></i>{{order.orderDate | date:'medium'}}</span>
         </div>
-        <div class="col-4">
-            <app-order-totals [shippingPrice]="order.deliveryCost" [subtotal]="order.subtotal" [total]="order.total">
-            </app-order-totals>
-        </div>
+
+        <span class="status"
+            [ngClass]="{
+                'pending': order.status === 'Pending',
+                'paid': order.status === 'PaymentReceived',
+                'failed': order.status === 'PaymentFailed'
+            }">
+            <ng-container [ngSwitch]="order.status">
+                <ng-container *ngSwitchCase="'PaymentReceived'">Paid</ng-container>
+                <ng-container *ngSwitchCase="'PaymentFailed'">Payment failed</ng-container>
+                <ng-container *ngSwitchDefault>{{order.status}}</ng-container>
+            </ng-container>
+        </span>
     </div>
 
+    <div class="row">
+
+        <!-- المنتجات -->
+        <div class="col-lg-8 mb-4">
+            <div class="panel">
+                <div class="panel-head">
+                    <h5 class="mb-0">Items <span class="count">{{order.items.length}}</span></h5>
+                </div>
+                <app-basket-summary [items]="order.items" [isBasket]="false" [isOrder]="true"></app-basket-summary>
+            </div>
+        </div>
+
+        <!-- الملخص -->
+        <div class="col-lg-4 mb-4">
+            <app-order-totals
+                [shippingPrice]="order.deliveryCost"
+                [subtotal]="order.subtotal"
+                [total]="order.total">
+            </app-order-totals>
+
+            <div class="info-card">
+                <h6 class="info-title"><i class="fa fa-truck"></i>Delivery</h6>
+                <p class="info-text">{{order.deliveryMethod}}</p>
+
+                <h6 class="info-title"><i class="fa fa-map-marker"></i>Shipping address</h6>
+                <p class="info-text mb-0" *ngIf="order.shipToAddress">
+                    {{order.shipToAddress.firstName}} {{order.shipToAddress.lastName}}<br>
+                    {{order.shipToAddress.street}}<br>
+                    {{order.shipToAddress.city}}, {{order.shipToAddress.country}}
+                </p>
+            </div>
+
+            <a routerLink="/orders" class="back-link">
+                <i class="fa fa-arrow-left mr-2"></i>Back to orders
+            </a>
+        </div>
+
+    </div>
 </div>

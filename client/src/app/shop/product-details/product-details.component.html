@@ -1,23 +1,67 @@
-<div class="container mt-5">
-    <div class="row" *ngIf="product">
-        <div class="col-6">
-            <img src="{{product.pictureUrl}}" alt="{{product.name}}" class="img-fluid w-100">
-        </div>
-        <div class="col-6">
-            <h3>{{product.name}}</h3>
-            <p style="font-size: 2em;">{{product.price | currency}}</p>
-            <div class="d-flex justify-content-start align-items-center">
-                <i (click)="decrementQuantity()" class="fa fa-minus-circle text-warning mr-2" style="cursor: pointer; font-size: 2em;"></i>
-                <span class="font-weight-bold" style="font-size: 1.5em;">{{quantity}}</span>
-                <i (click)="incrementQuantity()" class="fa fa-plus-circle text-warning mx-2" style="cursor: pointer; font-size: 2em;"></i>
-                <button (click)="addItemToBasket()" class="btn btn-outline-primary btn-lg ml-4">Add to Cart</button>
+<div class="container product-page" *ngIf="product">
+
+    <!-- <nav class="crumbs">
+        <a routerLink="/">Home</a>
+        <span class="sep">/</span>
+        <a routerLink="/shop">Shop</a>
+        <span class="sep">/</span>
+        <span class="current">{{product.name}}</span>
+    </nav> -->
+
+    <div class="product-card">
+        <div class="row no-gutters">
+
+            <!-- الصورة -->
+            <div class="col-md-6">
+                <div class="product-photo">
+                    <img [src]="product.pictureUrl" [alt]="product.name">
+                </div>
             </div>
-        </div>
-        <div class="row mt-5">
-            <div class="col-12 ml-3">
-                <h4>Description</h4>
-                <p>{{product.description}}</p>
+
+            <!-- البيانات -->
+            <div class="col-md-6">
+                <div class="product-info">
+
+                    <div class="tags">
+                        <span class="tag">{{product.productBrand}}</span>
+                        <span class="tag tag-muted">{{product.productType}}</span>
+                    </div>
+
+                    <h1 class="name">{{product.name}}</h1>
+                    <div class="price">{{product.price | currency}}</div>
+
+                    <h6 class="section-label">Description</h6>
+                    <p class="description">{{product.description}}</p>
+
+                    <div class="buy-row">
+                        <div class="qty">
+                            <button type="button" class="qty-btn" (click)="decrementQuantity()"
+                                [disabled]="quantity <= 1" aria-label="Decrease quantity">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <span class="qty-value">{{quantity}}</span>
+                            <button type="button" class="qty-btn" (click)="incrementQuantity()"
+                                aria-label="Increase quantity">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-add" (click)="addItemToBasket()">
+                            <i class="fa fa-shopping-cart mr-2"></i>Add to cart
+                        </button>
+                    </div>
+
+                    <div class="total">
+                        Total: <strong>{{product.price * quantity | currency}}</strong>
+                    </div>
+
+                    <a routerLink="/shop" class="back-link">
+                        <i class="fa fa-arrow-left mr-2"></i>Back to shop
+                    </a>
+
+                </div>
             </div>
+
         </div>
     </div>
 </div>

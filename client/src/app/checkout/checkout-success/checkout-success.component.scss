@@ -1,0 +1,150 @@
+$green: #28a745;
+$orange: #e95420;
+$dark: #343a40;
+$muted: #6c757d;
+
+.success-page {
+    padding-top: 48px;
+    padding-bottom: 72px;
+}
+
+.success-card {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 40px 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- الدايرة الخضراء ---------- */
+.check-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    height: 92px;
+    margin: 0 auto 24px;
+    font-size: 2.6rem;
+    color: #fff;
+    background: linear-gradient(135deg, #34c759, $green);
+    border-radius: 50%;
+    animation: pop 0.5s ease-out both, ring 1.4s ease-out 0.5s 2;
+}
+
+@keyframes pop {
+    0%   { transform: scale(0);    opacity: 0; }
+    60%  { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes ring {
+    0%   { box-shadow: 0 0 0 0 rgba($green, 0.45); }
+    100% { box-shadow: 0 0 0 26px rgba($green, 0); }
+}
+
+.title {
+    margin-bottom: 8px;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: $dark;
+}
+
+.subtitle {
+    margin-bottom: 28px;
+    color: $muted;
+}
+
+/* ---------- التفاصيل ---------- */
+.details {
+    margin-bottom: 20px;
+    text-align: left;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+}
+
+.detail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    .label {
+        flex-shrink: 0;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: $muted;
+    }
+
+    .value {
+        text-align: right;
+        color: $dark;
+    }
+
+    .mono {
+        font-family: Consolas, 'Courier New', monospace;
+        font-size: 0.85rem;
+        word-break: break-all;
+    }
+
+    &.total {
+        background: rgba($orange, 0.06);
+
+        .value {
+            font-size: 1.3rem;
+            color: $orange;
+        }
+    }
+}
+
+.demo-note {
+    margin-bottom: 28px;
+    font-size: 0.85rem;
+    color: $muted;
+}
+
+/* ---------- الأزرار ---------- */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+
+    .btn {
+        height: 46px;
+        padding: 0 26px;
+        font-weight: 600;
+        line-height: 34px;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 575px) {
+    .success-card {
+        padding: 36px 20px 28px;
+    }
+
+    .detail {
+        flex-direction: column;
+        gap: 4px;
+
+        .value {
+            text-align: left;
+        }
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+}
